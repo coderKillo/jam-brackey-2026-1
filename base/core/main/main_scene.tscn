@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=3 uid="uid://b6pacd4qux0r0"]
+
+[ext_resource type="Script" uid="uid://xwkwmj6gqkg7" path="res://base/core/main/main.gd" id="1_awp0h"]
+
+[node name="MainScene" type="Control" node_paths=PackedStringArray("level_container", "gui")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_awp0h")
+level_container = NodePath("World")
+gui = NodePath("CanvasLayer/Gui")
+
+[node name="World" type="Node2D" parent="."]
+position = Vector2(430, 175)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="Gui" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Label" type="Label" parent="CanvasLayer/Gui"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Healt: 100"

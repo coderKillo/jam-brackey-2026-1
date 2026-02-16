@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SceneResource" load_steps=8 format=3 uid="uid://dryquut2g4dy0"]
+
+[ext_resource type="PackedScene" uid="uid://7eh1kmaickso" path="res://game/levels/level1.tscn" id="1_louti"]
+[ext_resource type="PackedScene" uid="uid://cmmq3qk054d8m" path="res://base/menu/main_menu/main_menu.tscn" id="1_wlkvt"]
+[ext_resource type="PackedScene" uid="uid://dvm8aoo8xb6an" path="res://base/menu/overlay_menu/lose_menu.tscn" id="2_cnso4"]
+[ext_resource type="PackedScene" uid="uid://b6pacd4qux0r0" path="res://base/core/main/main_scene.tscn" id="2_louti"]
+[ext_resource type="Script" uid="uid://cb3sdw4sp7d3c" path="res://base/core/scenes/scene_resource.gd" id="2_wlkvt"]
+[ext_resource type="PackedScene" uid="uid://bxiiq0m66uinu" path="res://base/menu/overlay_menu/pause_menu.tscn" id="5_aa17h"]
+[ext_resource type="PackedScene" uid="uid://by632jqo48fbs" path="res://base/menu/overlay_menu/win_menu.tscn" id="6_aa17h"]
+
+[resource]
+script = ExtResource("2_wlkvt")
+levels = Array[PackedScene]([ExtResource("1_louti"), ExtResource("1_louti"), ExtResource("1_louti"), ExtResource("1_louti")])
+main_menu = ExtResource("1_wlkvt")
+main_scene = ExtResource("2_louti")
+win_menu = ExtResource("6_aa17h")
+lose_menu = ExtResource("2_cnso4")
+pause_menu = ExtResource("5_aa17h")
