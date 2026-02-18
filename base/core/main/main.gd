@@ -31,7 +31,7 @@ func _on_game_state_changed(new_state: Global.GameState):
 			GameManager.set_state(Global.GameState.GENERATE_LEVEL)
 
 		Global.GameState.GENERATE_LEVEL:
-			grid.generate_level(Vector2i(10, 8))
+			grid.generate_level(Vector2i(10, 8), 10)
 			await grid.level_generated
 			GameManager.set_state(Global.GameState.SPAWN_ENTITIES)
 

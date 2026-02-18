@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://b6pacd4qux0r0"]
+[gd_scene load_steps=21 format=4 uid="uid://b6pacd4qux0r0"]
 
 [ext_resource type="Script" uid="uid://xwkwmj6gqkg7" path="res://base/core/main/main.gd" id="1_awp0h"]
 [ext_resource type="Texture2D" uid="uid://bxbihdwj6trs3" path="res://assets/tilemap/tilemap.png" id="2_qe2dj"]
@@ -10,6 +10,8 @@
 [ext_resource type="Script" uid="uid://cvtcqlgrh4n1c" path="res://game/systems/portal.gd" id="5_x0q8c"]
 [ext_resource type="Script" uid="uid://bm5px06x0e0pw" path="res://game/gui/gui.gd" id="6_3p8nd"]
 [ext_resource type="Script" uid="uid://bcn0q4vy0p3px" path="res://game/manager/event_manager.gd" id="6_ugwa6"]
+[ext_resource type="Script" uid="uid://3cxfwyl4buid" path="res://game/systems/couch_model.gd" id="6_w3pcb"]
+[ext_resource type="Texture2D" uid="uid://iobs2ej4cnf0" path="res://assets/tilemap/couch.png" id="7_cyqf4"]
 [ext_resource type="Script" uid="uid://b6kewchuy3qid" path="res://game/manager/input_manager.gd" id="7_x0q8c"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dn4rf"]
@@ -25,6 +27,22 @@ sources/0 = SubResource("TileSetAtlasSource_dn4rf")
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ugwa6"]
 load_path = "res://.godot/imported/tilemap.png-118f8c11a79f7371b677279537288cfc.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ax4ej"]
+atlas = ExtResource("7_cyqf4")
+region = Rect2(0, 0, 16, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0h0lk"]
+atlas = ExtResource("7_cyqf4")
+region = Rect2(112, 0, 16, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oh5ki"]
+atlas = ExtResource("7_cyqf4")
+region = Rect2(32, 0, 16, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4jeu6"]
+atlas = ExtResource("7_cyqf4")
+region = Rect2(80, 0, 5, 64)
 
 [node name="MainScene" type="Control" node_paths=PackedStringArray("level_container", "gui")]
 layout_mode = 3
@@ -62,6 +80,44 @@ texture = SubResource("CompressedTexture2D_ugwa6")
 region_enabled = true
 region_rect = Rect2(128, 0, 32, 32)
 script = ExtResource("5_x0q8c")
+
+[node name="CouchModel" type="Node2D" parent="World"]
+position = Vector2(0, 143)
+scale = Vector2(2, 2)
+script = ExtResource("6_w3pcb")
+left_texture = SubResource("AtlasTexture_ax4ej")
+right_texture = SubResource("AtlasTexture_0h0lk")
+slot_texture = SubResource("AtlasTexture_oh5ki")
+border_texture = SubResource("AtlasTexture_4jeu6")
+
+[node name="Sprite2D" type="Sprite2D" parent="World/CouchModel"]
+position = Vector2(-26, 0)
+texture = ExtResource("7_cyqf4")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 64)
+
+[node name="Sprite2D2" type="Sprite2D" parent="World/CouchModel"]
+position = Vector2(-10, 0)
+texture = ExtResource("7_cyqf4")
+region_enabled = true
+region_rect = Rect2(32, 0, 16, 64)
+
+[node name="Sprite2D5" type="Sprite2D" parent="World/CouchModel"]
+texture = ExtResource("7_cyqf4")
+region_enabled = true
+region_rect = Rect2(80, 0, 5, 64)
+
+[node name="Sprite2D4" type="Sprite2D" parent="World/CouchModel"]
+position = Vector2(10, 0)
+texture = ExtResource("7_cyqf4")
+region_enabled = true
+region_rect = Rect2(32, 0, 16, 64)
+
+[node name="Sprite2D3" type="Sprite2D" parent="World/CouchModel"]
+position = Vector2(26, 0)
+texture = ExtResource("7_cyqf4")
+region_enabled = true
+region_rect = Rect2(112, 0, 16, 64)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 2

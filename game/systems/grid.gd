@@ -10,13 +10,17 @@ signal level_generated
 var gird_size := Vector2i.ZERO
 
 
-func generate_level(size: Vector2i):
+func generate_level(size: Vector2i, obsticals_count: int):
 	gird_size = size
 	reset()
 	var half_size = size / 2
 	for x in range(-half_size.x, half_size.x):
 		for y in range(-half_size.y, half_size.y):
 			set_cell(Vector2i(x, y), 0, ground_atlas_coords)
+
+	for i in range(obsticals_count):
+		set_cell(get_used_cells().pick_random(), 0, blocked_atlas_coords)
+
 	await get_tree().create_timer(0.2).timeout
 	level_generated.emit()
 
