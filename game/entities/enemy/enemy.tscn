@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://uhaoht8621ct"]
+[gd_scene load_steps=3 format=3 uid="uid://uhaoht8621ct"]
 
 [ext_resource type="Texture2D" uid="uid://bxbihdwj6trs3" path="res://assets/tilemap/tilemap.png" id="1_2gbo7"]
+[ext_resource type="Script" uid="uid://byix81a2cppm8" path="res://game/entities/enemy/enemy.gd" id="2_dgysd"]
 
 [node name="Enemy" type="Sprite2D" groups=["enemy"]]
 texture = ExtResource("1_2gbo7")
 region_enabled = true
 region_rect = Rect2(96, 0, 32, 32)
+script = ExtResource("2_dgysd")

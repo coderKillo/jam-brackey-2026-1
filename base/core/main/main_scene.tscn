@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=4 uid="uid://b6pacd4qux0r0"]
+[gd_scene load_steps=15 format=4 uid="uid://b6pacd4qux0r0"]
 
 [ext_resource type="Script" uid="uid://xwkwmj6gqkg7" path="res://base/core/main/main.gd" id="1_awp0h"]
 [ext_resource type="Texture2D" uid="uid://bxbihdwj6trs3" path="res://assets/tilemap/tilemap.png" id="2_qe2dj"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://jt2r2iwsu0qi" path="res://game/manager/enemy_manager.gd" id="5_6icyu"]
 [ext_resource type="PackedScene" uid="uid://uhaoht8621ct" path="res://game/entities/enemy/enemy.tscn" id="5_ugwa6"]
 [ext_resource type="Script" uid="uid://cvtcqlgrh4n1c" path="res://game/systems/portal.gd" id="5_x0q8c"]
+[ext_resource type="Script" uid="uid://bm5px06x0e0pw" path="res://game/gui/gui.gd" id="6_3p8nd"]
 [ext_resource type="Script" uid="uid://bcn0q4vy0p3px" path="res://game/manager/event_manager.gd" id="6_ugwa6"]
 [ext_resource type="Script" uid="uid://b6kewchuy3qid" path="res://game/manager/input_manager.gd" id="7_x0q8c"]
 
@@ -73,6 +74,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
+script = ExtResource("6_3p8nd")
+
+[node name="DebugText" type="RichTextLabel" parent="CanvasLayer/Gui"]
+custom_minimum_size = Vector2(150, 300)
+layout_mode = 0
+offset_left = 4.0
+offset_top = 3.0
+offset_right = 12.13
+offset_bottom = 123.0
+theme_override_font_sizes/normal_font_size = 16
+scroll_following = true
 
 [node name="Managers" type="Node2D" parent="."]
 
@@ -83,6 +95,7 @@ script = ExtResource("4_ociif")
 [node name="EnemyManager" type="Node2D" parent="Managers"]
 unique_name_in_owner = true
 script = ExtResource("5_6icyu")
+enemy_count = 1
 enemy_scene = ExtResource("5_ugwa6")
 
 [node name="EventManager" type="Node2D" parent="Managers"]

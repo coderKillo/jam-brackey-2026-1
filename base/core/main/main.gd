@@ -19,7 +19,7 @@ func _ready():
 
 	abilities.setup()
 	events.setup()
-	enemies.setup(grid)
+	enemies.setup(grid, player)
 	input.setup()
 	player.setup(grid)
 	portal.setup(grid)

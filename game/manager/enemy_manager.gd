@@ -1,6 +1,8 @@
 class_name EnemyManager
 extends Node
 
+const MOVEMENT_DIRECTIONS := [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
+
 signal enemies_moved
 signal enemies_spawned
 
@@ -8,11 +10,13 @@ signal enemies_spawned
 @export var enemy_scene: PackedScene
 
 var _grid: Grid
+var _player: Player
 var _enemies: Array[Node2D]
 
 
-func setup(grid: Grid):
+func setup(grid: Grid, player: Player):
 	_grid = grid
+	_player = player
 
 
 func spawn_enemies():
@@ -32,8 +36,30 @@ func clear_enemies():
 
 
 func move_enemies():
-	for enemy in _enemies:
-		var direction = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT].pick_random()
-		_grid.move(enemy, direction)
+	var player_pos := _grid.local_to_map(_player.position)
+
+	for _enemy in _enemies:
+		var enemy := _enemy as Enemy
+		var enemy_pos := _grid.local_to_map(enemy.position)
+		var move_direction := Vector2i.ZERO
+
+		for direction in MOVEMENT_DIRECTIONS:
+			if direction == enemy.last_movement:
+				continue
+			var new_pos = enemy_pos + direction
+			if _grid.is_cell_blocked(new_pos) or not _grid.is_within_bounds(new_pos):
+				continue
+			if player_pos.distance_to(new_pos) < player_pos.distance_to(enemy_pos + move_direction):
+				move_direction = direction
+
+		if move_direction != Vector2i.ZERO:
+			await _grid.move(enemy, move_direction)
+
+		## update position
+		enemy_pos = _grid.local_to_map(enemy.position)
+		if player_pos in _grid.get_surrounding_cells(enemy_pos):
+			var damage = enemy.attack_player()
+			Events.debug_text.emit("Player hit by " + str(damage))
+
 	await get_tree().create_timer(0.2).timeout
 	enemies_moved.emit()
