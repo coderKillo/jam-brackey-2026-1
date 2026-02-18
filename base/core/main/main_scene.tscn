@@ -1,6 +1,29 @@
-[gd_scene load_steps=2 format=3 uid="uid://b6pacd4qux0r0"]
+[gd_scene load_steps=14 format=4 uid="uid://b6pacd4qux0r0"]
 
 [ext_resource type="Script" uid="uid://xwkwmj6gqkg7" path="res://base/core/main/main.gd" id="1_awp0h"]
+[ext_resource type="Texture2D" uid="uid://bxbihdwj6trs3" path="res://assets/tilemap/tilemap.png" id="2_qe2dj"]
+[ext_resource type="Script" uid="uid://kjati1nod51" path="res://game/systems/grid.gd" id="3_6lyvc"]
+[ext_resource type="Script" uid="uid://ct0wfkng0uvkm" path="res://game/entities/player/player.gd" id="4_6icyu"]
+[ext_resource type="Script" uid="uid://ccjub2guv1dti" path="res://game/manager/ability_manager.gd" id="4_ociif"]
+[ext_resource type="Script" uid="uid://jt2r2iwsu0qi" path="res://game/manager/enemy_manager.gd" id="5_6icyu"]
+[ext_resource type="PackedScene" uid="uid://uhaoht8621ct" path="res://game/entities/enemy/enemy.tscn" id="5_ugwa6"]
+[ext_resource type="Script" uid="uid://cvtcqlgrh4n1c" path="res://game/systems/portal.gd" id="5_x0q8c"]
+[ext_resource type="Script" uid="uid://bcn0q4vy0p3px" path="res://game/manager/event_manager.gd" id="6_ugwa6"]
+[ext_resource type="Script" uid="uid://b6kewchuy3qid" path="res://game/manager/input_manager.gd" id="7_x0q8c"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dn4rf"]
+texture = ExtResource("2_qe2dj")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+2:0/0 = 0
+0:1/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_ma400"]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_dn4rf")
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ugwa6"]
+load_path = "res://.godot/imported/tilemap.png-118f8c11a79f7371b677279537288cfc.ctex"
 
 [node name="MainScene" type="Control" node_paths=PackedStringArray("level_container", "gui")]
 layout_mode = 3
@@ -15,7 +38,29 @@ level_container = NodePath("World")
 gui = NodePath("CanvasLayer/Gui")
 
 [node name="World" type="Node2D" parent="."]
-position = Vector2(430, 175)
+position = Vector2(320, 180)
+
+[node name="Grid" type="TileMapLayer" parent="World"]
+unique_name_in_owner = true
+position = Vector2(0, -19)
+tile_map_data = PackedByteArray("AAD7//z/AAAAAAAAAAD7//3/AAAAAAAAAAD7//7/AAAAAAAAAAD7////AAAAAAAAAAD7/wAAAAAAAAAAAAD7/wEAAAAAAAAAAAD7/wIAAAAAAAAAAAD7/wMAAAAAAAAAAAD8//z/AAAAAAAAAAD8//3/AAAAAAAAAAD8//7/AAAAAAAAAAD8////AAAAAAAAAAD8/wAAAAAAAAAAAAD8/wEAAAAAAAAAAAD8/wIAAAAAAAAAAAD8/wMAAAAAAAAAAAD9//z/AAAAAAAAAAD9//3/AAAAAAAAAAD9//7/AAAAAAAAAAD9////AAAAAAAAAAD9/wAAAAAAAAAAAAD9/wEAAAAAAAAAAAD9/wIAAAAAAAAAAAD9/wMAAAAAAAAAAAD+//z/AAAAAAAAAAD+//3/AAAAAAAAAAD+//7/AAAAAAAAAAD+////AAAAAAAAAAD+/wAAAAAAAAAAAAD+/wEAAAAAAAAAAAD+/wIAAAAAAAAAAAD+/wMAAAAAAAAAAAD///z/AAAAAAAAAAD///3/AAAAAAAAAAD///7/AAAAAAAAAAD/////AAAAAAAAAAD//wAAAAAAAAAAAAD//wEAAAAAAAAAAAD//wIAAAAAAAAAAAD//wMAAAAAAAAAAAAAAPz/AAAAAAAAAAAAAP3/AAAAAAAAAAAAAP7/AAAAAAAAAAAAAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAMAAAAAAAAAAAABAPz/AAAAAAAAAAABAP3/AAAAAAAAAAABAP7/AAAAAAAAAAABAP//AAAAAAAAAAABAAAAAAAAAAAAAAABAAEAAAAAAAAAAAABAAIAAAAAAAAAAAABAAMAAAAAAAAAAAACAPz/AAAAAAAAAAACAP3/AAAAAAAAAAACAP7/AAAAAAAAAAACAP//AAAAAAAAAAACAAAAAAAAAAAAAAACAAEAAAAAAAAAAAACAAIAAAAAAAAAAAACAAMAAAAAAAAAAAADAPz/AAAAAAAAAAADAP3/AAAAAAAAAAADAP7/AAAAAAAAAAADAP//AAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAADAAIAAAAAAAAAAAADAAMAAAAAAAAAAAAEAPz/AAAAAAAAAAAEAP3/AAAAAAAAAAAEAP7/AAAAAAAAAAAEAP//AAAAAAAAAAAEAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAAEAAIAAAAAAAAAAAAEAAMAAAAAAAAAAAA=")
+tile_set = SubResource("TileSet_ma400")
+script = ExtResource("3_6lyvc")
+blocked_atlas_coords = Vector2i(0, 1)
+
+[node name="Player" type="Sprite2D" parent="World/Grid"]
+unique_name_in_owner = true
+texture = ExtResource("2_qe2dj")
+region_enabled = true
+region_rect = Rect2(64, 0, 32, 32)
+script = ExtResource("4_6icyu")
+
+[node name="Portal" type="Sprite2D" parent="World/Grid"]
+unique_name_in_owner = true
+texture = SubResource("CompressedTexture2D_ugwa6")
+region_enabled = true
+region_rect = Rect2(128, 0, 32, 32)
+script = ExtResource("5_x0q8c")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 2
@@ -29,8 +74,21 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="Label" type="Label" parent="CanvasLayer/Gui"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-text = "Healt: 100"
+[node name="Managers" type="Node2D" parent="."]
+
+[node name="AbilityManager" type="Node2D" parent="Managers"]
+unique_name_in_owner = true
+script = ExtResource("4_ociif")
+
+[node name="EnemyManager" type="Node2D" parent="Managers"]
+unique_name_in_owner = true
+script = ExtResource("5_6icyu")
+enemy_scene = ExtResource("5_ugwa6")
+
+[node name="EventManager" type="Node2D" parent="Managers"]
+unique_name_in_owner = true
+script = ExtResource("6_ugwa6")
+
+[node name="InputManager" type="Node2D" parent="Managers"]
+unique_name_in_owner = true
+script = ExtResource("7_x0q8c")

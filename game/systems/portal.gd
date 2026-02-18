@@ -1,4 +1,4 @@
-class_name Player
+class_name Portal
 extends Sprite2D
 
 signal spawned
@@ -11,11 +11,6 @@ func setup(grid: Grid):
 
 
 func spawn():
-	reset()
-	_grid.add(self)
+	_grid.add(self, Vector2i.ZERO, false)
 	await get_tree().create_timer(0.2).timeout
 	spawned.emit()
-
-
-func reset():
-	pass
