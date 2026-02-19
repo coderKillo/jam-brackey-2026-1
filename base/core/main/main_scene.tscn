@@ -93,7 +93,7 @@ position = Vector2(320, 180)
 [node name="Grid" type="TileMapLayer" parent="World"]
 unique_name_in_owner = true
 self_modulate = Color(1, 1, 1, 0.34902)
-position = Vector2(0, -19)
+position = Vector2(0, -36)
 tile_map_data = PackedByteArray("AAD7//z/AAAAAAAAAAD7//3/AAAAAAAAAAD7//7/AAAAAAAAAAD7////AAAAAAAAAAD7/wAAAAAAAAAAAAD7/wEAAAAAAAAAAAD7/wIAAAAAAAAAAAD7/wMAAAAAAAAAAAD8//z/AAAAAAAAAAD8//3/AAAAAAAAAAD8//7/AAAAAAAAAAD8////AAAAAAAAAAD8/wAAAAAAAAAAAAD8/wEAAAAAAAAAAAD8/wIAAAAAAAAAAAD8/wMAAAAAAAAAAAD9//z/AAAAAAAAAAD9//3/AAAAAAAAAAD9//7/AAAAAAAAAAD9////AAAAAAAAAAD9/wAAAAAAAAAAAAD9/wEAAAAAAAAAAAD9/wIAAAAAAAAAAAD9/wMAAAAAAAAAAAD+//z/AAAAAAAAAAD+//3/AAAAAAAAAAD+//7/AAAAAAAAAAD+////AAAAAAAAAAD+/wAAAAAAAAAAAAD+/wEAAAAAAAAAAAD+/wIAAAAAAAAAAAD+/wMAAAAAAAAAAAD///z/AAAAAAAAAAD///3/AAAAAAAAAAD///7/AAAAAAAAAAD/////AAAAAAAAAAD//wAAAAAAAAAAAAD//wEAAAAAAAAAAAD//wIAAAAAAAAAAAD//wMAAAAAAAAAAAAAAPz/AAAAAAAAAAAAAP3/AAAAAAAAAAAAAP7/AAAAAAAAAAAAAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAMAAAAAAAAAAAABAPz/AAAAAAAAAAABAP3/AAAAAAAAAAABAP7/AAAAAAAAAAABAP//AAAAAAAAAAABAAAAAAAAAAAAAAABAAEAAAAAAAAAAAABAAIAAAAAAAAAAAABAAMAAAAAAAAAAAACAPz/AAAAAAAAAAACAP3/AAAAAAAAAAACAP7/AAAAAAAAAAACAP//AAAAAAAAAAACAAAAAAAAAAAAAAACAAEAAAAAAAAAAAACAAIAAAAAAAAAAAACAAMAAAAAAAAAAAADAPz/AAAAAAAAAAADAP3/AAAAAAAAAAADAP7/AAAAAAAAAAADAP//AAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAADAAIAAAAAAAAAAAADAAMAAAAAAAAAAAAEAPz/AAAAAAAAAAAEAP3/AAAAAAAAAAAEAP7/AAAAAAAAAAAEAP//AAAAAAAAAAAEAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAAEAAIAAAAAAAAAAAAEAAMAAAAAAAAAAAA=")
 tile_set = SubResource("TileSet_ma400")
 script = ExtResource("3_6lyvc")
@@ -101,6 +101,7 @@ blocked_atlas_coords = Vector2i(0, 1)
 
 [node name="Player" type="Sprite2D" parent="World/Grid"]
 unique_name_in_owner = true
+visible = false
 texture = ExtResource("2_qe2dj")
 region_enabled = true
 region_rect = Rect2(64, 0, 32, 32)
@@ -108,6 +109,7 @@ script = ExtResource("4_6icyu")
 
 [node name="Portal" type="Sprite2D" parent="World/Grid"]
 unique_name_in_owner = true
+visible = false
 texture = SubResource("CompressedTexture2D_ugwa6")
 region_enabled = true
 region_rect = Rect2(128, 0, 32, 32)
@@ -122,10 +124,16 @@ right_texture = SubResource("AtlasTexture_0h0lk")
 slot_texture = SubResource("AtlasTexture_oh5ki")
 border_texture = SubResource("AtlasTexture_4jeu6")
 
+[node name="Selector" type="Sprite2D" parent="World/CouchModel"]
+visible = false
+z_index = 1
+texture = ExtResource("10_0h0lk")
+hframes = 2
+
 [node name="TargetGrid" type="TileMapLayer" parent="World"]
 unique_name_in_owner = true
 self_modulate = Color(1, 0.24, 0.24, 0.47451)
-position = Vector2(0, -19)
+position = Vector2(0, -36)
 tile_set = SubResource("TileSet_w3pcb")
 script = ExtResource("8_cyqf4")
 

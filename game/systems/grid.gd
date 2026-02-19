@@ -51,8 +51,10 @@ func move(entity: Node2D, direction: Vector2i) -> bool:
 
 	if not is_within_bounds(new_pos):
 		moved = false
+		new_pos = old_pos
 	if is_cell_blocked(new_pos):
 		moved = false
+		new_pos = old_pos
 
 	set_cell(old_pos, 0, ground_atlas_coords)
 

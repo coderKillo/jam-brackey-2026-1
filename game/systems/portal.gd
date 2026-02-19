@@ -12,5 +12,7 @@ func setup(grid: Grid):
 
 func spawn():
 	_grid.add(self, Vector2i.ZERO, false)
-	await get_tree().create_timer(0.2).timeout
+	hide()
+	await VfxManager.spawn_effect(VfxManager.Effect.SPAWN, global_position, 3)
+	show()
 	spawned.emit()

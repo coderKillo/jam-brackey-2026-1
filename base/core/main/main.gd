@@ -33,7 +33,7 @@ func _on_game_state_changed(new_state: Global.GameState):
 			GameManager.set_state(Global.GameState.GENERATE_LEVEL)
 
 		Global.GameState.GENERATE_LEVEL:
-			grid.generate_level(Vector2i(10, 8), 10)
+			grid.generate_level(Vector2i(12, 6), 10)
 			await grid.level_generated
 			GameManager.set_state(Global.GameState.SPAWN_ENTITIES)
 
@@ -54,6 +54,11 @@ func _on_game_state_changed(new_state: Global.GameState):
 		Global.GameState.MOVE_PLAYER:
 			grid.move(player, input.direction)
 			await grid.entity_moved
+
+			if grid.get_coords(player) == grid.get_coords(portal):
+				GameManager.set_state(Global.GameState.PORTAL_REACHED)
+				return
+
 			GameManager.set_state(Global.GameState.ENEMY_TURN)
 
 		Global.GameState.USE_ABILITY:
@@ -68,11 +73,6 @@ func _on_game_state_changed(new_state: Global.GameState):
 		Global.GameState.ENEMY_TURN:
 			enemies.move_enemies()
 			await enemies.enemies_moved
-
-			if grid.get_coords(player) == grid.get_coords(portal):
-				GameManager.set_state(Global.GameState.PORTAL_REACHED)
-				return
-
 			GameManager.set_state(Global.GameState.WAIT_FOR_COMBAT_INPUT)
 
 		Global.GameState.HANDLE_DAMAGE:
@@ -80,6 +80,8 @@ func _on_game_state_changed(new_state: Global.GameState):
 
 		Global.GameState.PORTAL_REACHED:
 			enemies.clear_enemies()
+			player.hide()
+			portal.hide()
 			GameManager.set_state(Global.GameState.TRANSITION_ANIMATION)
 
 
@@ -95,10 +97,10 @@ func handle_player_combat_input() -> Global.GameState:
 					break
 
 			InputManager.Mode.SELECT_ABILITY:
+				abilities.select_slot(input.ability_selected)
+				var ability = abilities.get_ability(input.ability_selected)
 				target_grid.make_shape(
-					abilities.abilites[input.ability_selected].shape,
-					grid.local_to_map(player.position),
-					abilities.abilites[input.ability_selected].range
+					ability.shape, grid.local_to_map(player.position), ability.range
 				)
 
 			InputManager.Mode.SELECT_CELL:
