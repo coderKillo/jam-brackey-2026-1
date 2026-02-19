@@ -45,22 +45,25 @@ func add(
 
 
 func move(entity: Node2D, direction: Vector2i) -> bool:
-	await get_tree().create_timer(0.2).timeout
+	var moved = true
 	var old_pos = local_to_map(entity.position)
 	var new_pos = old_pos + direction
-	if not is_within_bounds(new_pos):
-		entity_moved.emit()
-		return false
 
+	if not is_within_bounds(new_pos):
+		moved = false
 	if is_cell_blocked(new_pos):
-		entity_moved.emit()
-		return false
+		moved = false
 
 	set_cell(old_pos, 0, ground_atlas_coords)
-	entity.position = map_to_local(new_pos)
+
+	var tween = get_tree().create_tween()
+	tween.tween_property(entity, "position", map_to_local(new_pos), 0.2)
+	await tween.finished
+
 	set_cell(new_pos, 0, blocked_atlas_coords)
+
 	entity_moved.emit()
-	return true
+	return moved
 
 
 func get_coords(entity: Node2D) -> Vector2i:
