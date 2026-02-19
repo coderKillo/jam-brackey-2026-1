@@ -24,6 +24,7 @@ SceneManager="*res://base/autoload/scene_manager.gd"
 AppConfig="*res://base/autoload/app_config.gd"
 Screenshot="*res://base/autoload/screenshot.gd"
 GameManager="*res://game/autoload/game_manager.gd"
+VfxManager="*res://game/autoload/vfx_manager.gd"
 
 [display]
 

@@ -25,7 +25,9 @@ func spawn_enemies():
 		if _grid.add(enemy):
 			_grid.add_child(enemy)
 			_enemies.append(enemy)
-	await get_tree().create_timer(0.2).timeout
+			enemy.hide()
+			await VfxManager.spawn_effect(VfxManager.Effect.SPAWN, enemy.global_position, 3)
+			enemy.show()
 	enemies_spawned.emit()
 
 
