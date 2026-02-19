@@ -67,6 +67,16 @@ func get_coords(entity: Node2D) -> Vector2i:
 	return local_to_map(entity.position)
 
 
+func raycast(start: Vector2i, direction: Vector2i, length: int) -> Array[Vector2i]:
+	var result: Array[Vector2i]
+	for i in length:
+		var cell_pos = start + direction * (i + 1)
+		if not is_within_bounds(cell_pos) or is_cell_blocked(cell_pos):
+			break
+		result.append(cell_pos)
+	return result
+
+
 func get_free_cells() -> Array[Vector2i]:
 	return get_used_cells().filter(func(coords): return not is_cell_blocked(coords))
 

@@ -11,6 +11,7 @@ extends Control
 @onready var player: Player = %Player
 @onready var portal: Portal = %Portal
 @onready var grid: Grid = %Grid
+@onready var target_grid: TargetGrid = %TargetGrid
 
 
 func _ready():
@@ -23,6 +24,7 @@ func _ready():
 	input.setup()
 	player.setup(grid)
 	portal.setup(grid)
+	target_grid.setup(grid)
 
 
 func _on_game_state_changed(new_state: Global.GameState):
@@ -45,8 +47,9 @@ func _on_game_state_changed(new_state: Global.GameState):
 			GameManager.set_state(Global.GameState.WAIT_FOR_COMBAT_INPUT)
 
 		Global.GameState.WAIT_FOR_COMBAT_INPUT:
-			await input.input_received
-			GameManager.set_state(Global.GameState.MOVE_PLAYER)
+			var result = await handle_player_combat_input()
+			assert(result in [Global.GameState.MOVE_PLAYER, Global.GameState.USE_ABILITY])
+			GameManager.set_state(result)
 
 		Global.GameState.MOVE_PLAYER:
 			grid.move(player, input.direction)
@@ -54,7 +57,7 @@ func _on_game_state_changed(new_state: Global.GameState):
 			GameManager.set_state(Global.GameState.ENEMY_TURN)
 
 		Global.GameState.USE_ABILITY:
-			pass
+			GameManager.set_state(Global.GameState.ENEMY_TURN)
 
 		Global.GameState.PLAY_EVENT:
 			pass
@@ -78,3 +81,30 @@ func _on_game_state_changed(new_state: Global.GameState):
 		Global.GameState.PORTAL_REACHED:
 			enemies.clear_enemies()
 			GameManager.set_state(Global.GameState.TRANSITION_ANIMATION)
+
+
+func handle_player_combat_input() -> Global.GameState:
+	var result = Global.GameState.WAIT_FOR_EVENT_INPUT
+	while true:
+		await input.input_received
+		match input.current_mode:
+			InputManager.Mode.MOVEMENT:
+				target_grid.reset()
+				if input.direction != Vector2i.ZERO:
+					result = Global.GameState.MOVE_PLAYER
+					break
+
+			InputManager.Mode.SELECT_ABILITY:
+				target_grid.make_shape(
+					abilities.abilites[input.ability_selected].shape,
+					grid.local_to_map(player.position),
+					abilities.abilites[input.ability_selected].range
+				)
+
+			InputManager.Mode.SELECT_CELL:
+				target_grid.move_selector(input.direction)
+
+			InputManager.Mode.CAST_ABILITY:
+				result = Global.GameState.MOVE_PLAYER
+				break
+	return result
