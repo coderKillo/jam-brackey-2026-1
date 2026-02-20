@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://deg3gb8lq72x2"]
+
+[ext_resource type="Texture2D" uid="uid://bxbihdwj6trs3" path="res://assets/tilemap/tilemap.png" id="1_x4rrl"]
+[ext_resource type="Script" uid="uid://ct0wfkng0uvkm" path="res://game/entities/player/player.gd" id="2_cjfdk"]
+[ext_resource type="Texture2D" uid="uid://d16rk4rb5t1ji" path="res://assets/abilities/target.png" id="3_cjfdk"]
+[ext_resource type="Texture2D" uid="uid://ikg6fsecotxt" path="res://assets/abilities/2x2.png" id="3_oic1i"]
+
+[node name="Player" type="Sprite2D"]
+texture = ExtResource("1_x4rrl")
+region_enabled = true
+region_rect = Rect2(64, 0, 32, 32)
+script = ExtResource("2_cjfdk")
+
+[node name="Shield" type="Sprite2D" parent="."]
+texture = ExtResource("3_cjfdk")
+
+[node name="Projectile" type="Node2D" parent="."]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Projectile"]
+position = Vector2(1, 0)
+texture = ExtResource("3_oic1i")

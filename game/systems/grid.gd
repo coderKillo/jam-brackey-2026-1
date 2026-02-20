@@ -5,7 +5,8 @@ signal entity_moved
 signal level_generated
 
 @export var ground_atlas_coords: Vector2i
-@export var blocked_atlas_coords: Vector2i
+@export var unit_atlas_coords: Vector2i
+@export var obstical_atlas_coords: Vector2i
 
 var gird_size := Vector2i.ZERO
 
@@ -19,7 +20,7 @@ func generate_level(size: Vector2i, obsticals_count: int):
 			set_cell(Vector2i(x, y), 0, ground_atlas_coords)
 
 	for i in range(obsticals_count):
-		set_cell(get_used_cells().pick_random(), 0, blocked_atlas_coords)
+		set_cell(get_used_cells().pick_random(), 0, obstical_atlas_coords)
 
 	await get_tree().create_timer(0.2).timeout
 	level_generated.emit()
@@ -32,7 +33,7 @@ func reset():
 func add(
 	entity: Node2D, start_position: Vector2i = Vector2i(0, 0), block_cell: bool = true
 ) -> bool:
-	if is_cell_blocked(start_position) or not is_within_bounds(start_position):
+	if not is_ground(start_position) or not is_within_bounds(start_position):
 		var free_cells := get_free_cells()
 		if free_cells.is_empty():
 			return false
@@ -40,19 +41,25 @@ func add(
 
 	entity.position = map_to_local(start_position)
 	if block_cell:
-		set_cell(start_position, 0, blocked_atlas_coords)
+		set_cell(start_position, 0, unit_atlas_coords)
 	return true
 
 
 func move(entity: Node2D, direction: Vector2i) -> bool:
-	var moved = true
 	var old_pos = local_to_map(entity.position)
 	var new_pos = old_pos + direction
+	var moved = await move_to(entity, new_pos)
+	return moved
+
+
+func move_to(entity: Node2D, new_pos: Vector2i) -> bool:
+	var moved = true
+	var old_pos = local_to_map(entity.position)
 
 	if not is_within_bounds(new_pos):
 		moved = false
 		new_pos = old_pos
-	if is_cell_blocked(new_pos):
+	if is_obstical(new_pos) or is_unit(new_pos):
 		moved = false
 		new_pos = old_pos
 
@@ -62,7 +69,7 @@ func move(entity: Node2D, direction: Vector2i) -> bool:
 	tween.tween_property(entity, "position", map_to_local(new_pos), 0.2)
 	await tween.finished
 
-	set_cell(new_pos, 0, blocked_atlas_coords)
+	set_cell(new_pos, 0, unit_atlas_coords)
 
 	entity_moved.emit()
 	return moved
@@ -76,18 +83,26 @@ func raycast(start: Vector2i, direction: Vector2i, length: int) -> Array[Vector2
 	var result: Array[Vector2i]
 	for i in length:
 		var cell_pos = start + direction * (i + 1)
-		if not is_within_bounds(cell_pos) or is_cell_blocked(cell_pos):
+		if not is_within_bounds(cell_pos) or is_obstical(cell_pos):
 			break
 		result.append(cell_pos)
 	return result
 
 
 func get_free_cells() -> Array[Vector2i]:
-	return get_used_cells().filter(func(coords): return not is_cell_blocked(coords))
+	return get_used_cells().filter(func(coords): return is_ground(coords))
 
 
-func is_cell_blocked(coords: Vector2i) -> bool:
-	return get_cell_atlas_coords(coords) == blocked_atlas_coords
+func is_obstical(coords: Vector2i) -> bool:
+	return get_cell_atlas_coords(coords) == obstical_atlas_coords
+
+
+func is_ground(coords: Vector2i) -> bool:
+	return get_cell_atlas_coords(coords) == ground_atlas_coords
+
+
+func is_unit(coords: Vector2i) -> bool:
+	return get_cell_atlas_coords(coords) == unit_atlas_coords
 
 
 func is_within_bounds(coords: Vector2i) -> bool:

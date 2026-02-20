@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://b0pvs5nahwkt2"]
+
+[ext_resource type="Texture2D" uid="uid://iobs2ej4cnf0" path="res://assets/tilemap/couch.png" id="1_raj3v"]
+
+[node name="Slot" type="Sprite2D"]
+texture = ExtResource("1_raj3v")
+region_enabled = true
+region_rect = Rect2(32, 0, 16, 64)
+
+[node name="Label" type="Label" parent="."]
+offset_left = -19.5
+offset_top = -16.5
+offset_right = 20.5
+offset_bottom = -1.5
+text = "10"
+horizontal_alignment = 1
+vertical_alignment = 1

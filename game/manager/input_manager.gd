@@ -44,7 +44,6 @@ func setup() -> void:
 func reset():
 	current_mode = Mode.MOVEMENT
 	direction = Vector2i.ZERO
-	ability_selected = -1
 
 
 func _process(_delta):
@@ -72,7 +71,7 @@ func _process(_delta):
 			elif Input.is_action_just_pressed("action"):
 				current_mode = Mode.SELECT_CELL
 			elif Input.is_action_just_pressed("cancel"):
-				current_mode = Mode.MOVEMENT
+				cancel()
 
 		Mode.SELECT_CELL:
 			if Input.is_action_just_pressed("move_right"):
@@ -86,7 +85,7 @@ func _process(_delta):
 			elif Input.is_action_just_pressed("action"):
 				current_mode = Mode.CAST_ABILITY
 			elif Input.is_action_just_pressed("cancel"):
-				current_mode = Mode.SELECT_ABILITY
+				cancel()
 
 
 func _on_game_state_changed(state: Global.GameState):
@@ -96,3 +95,14 @@ func _on_game_state_changed(state: Global.GameState):
 			_active = true
 		_:
 			_active = false
+
+
+func cancel():
+	if not _active:
+		return
+	match current_mode:
+		Mode.SELECT_ABILITY:
+			current_mode = Mode.MOVEMENT
+
+		Mode.SELECT_CELL:
+			current_mode = Mode.SELECT_ABILITY

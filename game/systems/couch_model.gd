@@ -6,15 +6,23 @@ const BORDER_SIZE = 4
 const SELECTION_VALID = 0
 const SELECTION_INVALID = 1
 
+@export var ability_manager: AbilityManager
 @export var left_texture: Texture
 @export var right_texture: Texture
-@export var slot_texture: Texture
 @export var border_texture: Texture
 
 @onready var selector: Sprite2D = $Selector
+@onready var slot_model_scene: PackedScene = preload("res://game/systems/slot_model.tscn")
 
-var _slot_position: Array[float]
+var _slots: Array[Sprite2D]
 var _selector_position := Vector2.ZERO
+
+
+func _ready():
+	ability_manager.slot_index_changed.connect(_on_slot_index_changed)
+	ability_manager.slots_changed.connect(_on_slots_changed)
+	Events.slot_count_changed.connect(_on_slot_count_changed)
+	GameManager.state_changed.connect(_on_game_state_changed)
 
 
 func _process(_delta):
@@ -22,46 +30,47 @@ func _process(_delta):
 
 
 func setup(slots: int):
-	for child in get_children():
-		if child == selector:
-			continue
-		child.queue_free()
-	_slot_position.clear()
+	_clear_model()
 
 	var size = SLOT_SIZE + slots * SLOT_SIZE + (slots - 1) * BORDER_SIZE
 	var pointer = -(size / 2.0)
 
-	var left = Sprite2D.new()
-	left.texture = left_texture
-	left.position.x = pointer
-	add_child(left)
+	_add_sprite(left_texture, pointer)
 	pointer += SLOT_SIZE
 
 	for i in slots:
-		var slot = Sprite2D.new()
-		slot.texture = slot_texture
+		var slot = slot_model_scene.instantiate()
 		slot.position.x = pointer
 		add_child(slot)
-		_slot_position.append(pointer)
+		_slots.append(slot)
 
 		if i < (slots - 1):
 			pointer += (SLOT_SIZE / 2.0 + BORDER_SIZE / 2.0)
-			var border = Sprite2D.new()
-			border.texture = border_texture
-			border.position.x = pointer
-			add_child(border)
+			_add_sprite(border_texture, pointer)
 			pointer += (SLOT_SIZE / 2.0 + BORDER_SIZE / 2.0)
 
 	pointer += SLOT_SIZE
-	var right = Sprite2D.new()
-	right.texture = right_texture
-	right.position.x = pointer
-	add_child(right)
+	_add_sprite(right_texture, pointer)
+
+	update_slots()
+
+
+func update_slots():
+	for index in ability_manager.slot_count:
+		var slot := ability_manager._slots[index] as AbilityManager.Slot
+		if not is_instance_valid(slot):
+			continue
+		var cooldown_label := _slots[index].get_node("Label") as Label
+		if slot.cooldown > 0:
+			cooldown_label.show()
+			cooldown_label.text = str(slot.cooldown)
+		else:
+			cooldown_label.hide()
 
 
 func select(slot_index: int, valid: bool):
 	selector.show()
-	_selector_position.x = _slot_position[slot_index]
+	_selector_position.x = _slots[slot_index].position.x
 	_selector_position.y = 0
 
 	if valid:
@@ -72,3 +81,40 @@ func select(slot_index: int, valid: bool):
 
 func reset():
 	selector.hide()
+
+
+func _on_slots_changed():
+	update_slots()
+
+
+func _on_slot_count_changed(count: int):
+	setup(count)
+
+
+func _on_slot_index_changed(index: int):
+	if index == -1:
+		reset()
+	else:
+		if ability_manager.is_slot_valid(index) and ability_manager._slots[index].cooldown <= 0:
+			select(index, true)
+		else:
+			select(index, false)
+
+
+func _on_game_state_changed(_state: Global.GameState):
+	pass
+
+
+func _clear_model():
+	for child in get_children():
+		if child == selector:
+			continue
+		child.queue_free()
+	_slots.clear()
+
+
+func _add_sprite(texture: Texture, x_position: float) -> void:
+	var sprite = Sprite2D.new()
+	sprite.texture = texture
+	sprite.position.x = x_position
+	add_child(sprite)

@@ -3,7 +3,16 @@ extends Sprite2D
 
 signal spawned
 
+var shield_value := 0
+
+@onready var shield: Sprite2D = $Shield
+@onready var projectile: Node2D = $Projectile
+
 var _grid: Grid
+
+
+func _process(_delta):
+	shield.modulate.a = shield_value / 5.0
 
 
 func setup(grid: Grid):
@@ -20,4 +29,4 @@ func spawn():
 
 
 func reset():
-	pass
+	projectile.hide()

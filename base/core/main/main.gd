@@ -33,7 +33,7 @@ func _on_game_state_changed(new_state: Global.GameState):
 			GameManager.set_state(Global.GameState.GENERATE_LEVEL)
 
 		Global.GameState.GENERATE_LEVEL:
-			grid.generate_level(Vector2i(12, 6), 10)
+			grid.generate_level(Vector2i(10, 7), 10)
 			await grid.level_generated
 			GameManager.set_state(Global.GameState.SPAWN_ENTITIES)
 
@@ -62,6 +62,7 @@ func _on_game_state_changed(new_state: Global.GameState):
 			GameManager.set_state(Global.GameState.ENEMY_TURN)
 
 		Global.GameState.USE_ABILITY:
+			await handle_abilities()
 			GameManager.set_state(Global.GameState.ENEMY_TURN)
 
 		Global.GameState.PLAY_EVENT:
@@ -92,9 +93,13 @@ func handle_player_combat_input() -> Global.GameState:
 		match input.current_mode:
 			InputManager.Mode.MOVEMENT:
 				target_grid.reset()
+				abilities.reset()
 				if input.direction != Vector2i.ZERO:
-					result = Global.GameState.MOVE_PLAYER
-					break
+					if grid.is_ground(grid.get_coords(player) + input.direction):
+						result = Global.GameState.MOVE_PLAYER
+						break
+					else:
+						Events.camera_shake.emit(0.2)
 
 			InputManager.Mode.SELECT_ABILITY:
 				abilities.select_slot(input.ability_selected)
@@ -104,9 +109,100 @@ func handle_player_combat_input() -> Global.GameState:
 				)
 
 			InputManager.Mode.SELECT_CELL:
-				target_grid.move_selector(input.direction)
+				if not abilities.is_slot_valid(input.ability_selected):
+					Events.camera_shake.emit(0.2)
+					input.cancel()
+					continue
+
+				if abilities._slots[input.ability_selected].cooldown > 0:
+					Events.camera_shake.emit(0.2)
+					input.cancel()
+					continue
+
+				match abilities.get_ability(input.ability_selected).shape:
+					TargetGrid.Shapes.NONE:
+						result = Global.GameState.USE_ABILITY
+						break
+					_:
+						target_grid.move_selector(input.direction)
 
 			InputManager.Mode.CAST_ABILITY:
-				result = Global.GameState.MOVE_PLAYER
-				break
+				if abilities.is_slot_valid(input.ability_selected):
+					result = Global.GameState.USE_ABILITY
+					break
+				else:
+					Events.camera_shake.emit(0.2)
 	return result
+
+
+func handle_abilities():
+	abilities.cast_ability(input.ability_selected)
+	var ability = abilities.get_ability(input.ability_selected)
+	var player_coord = grid.get_coords(player)
+	var direction = Math.vector2i_direction(player_coord, target_grid.selector_position)
+
+	match ability.ability:
+		AbilityManager.Ability.SHOOT:
+			enemies.take_damage(target_grid.selector_position)
+			grid.set_cell(target_grid.selector_position, 0, grid.ground_atlas_coords)
+
+		AbilityManager.Ability.LASER:
+			for cell in grid.raycast(player_coord, direction, ability.range):
+				enemies.take_damage(cell)
+
+		AbilityManager.Ability.DASH:
+			var result = grid.raycast(player_coord, direction, ability.range)
+			if not result.is_empty():
+				grid.move_to(player, result.back())
+				await grid.entity_moved
+			for cell in result:
+				enemies.take_damage(cell)
+
+		AbilityManager.Ability.HOOK:
+			var end_position = player_coord + direction
+			for cell in grid.raycast(player_coord, direction, ability.range):
+				if grid.is_unit(cell):
+					grid.move_to(enemies.get_enemy(cell), end_position)
+					await grid.entity_moved
+					break
+
+		AbilityManager.Ability.BLINK:
+			await VfxManager.spawn_effect(VfxManager.Effect.SPAWN, player.global_position, 3)
+			player.hide()
+			grid.move_to(player, target_grid.selector_position)
+			await grid.entity_moved
+			await VfxManager.spawn_effect(VfxManager.Effect.SPAWN, player.global_position, 3)
+			player.show()
+
+		AbilityManager.Ability.PUSH:
+			for push_direction in TargetGrid.DIRECTIONS:
+				var enemy = enemies.get_enemy(player_coord + push_direction)
+				if not is_instance_valid(enemy):
+					continue
+				var result = grid.raycast(player_coord, push_direction, ability.range)
+				if result.is_empty():
+					continue
+				grid.move_to(enemy, result.back())
+				await grid.entity_moved
+
+			for push_direction in TargetGrid.DIRECTIONS_DIAGONAL:
+				var enemy = enemies.get_enemy(player_coord + push_direction)
+				if not is_instance_valid(enemy):
+					continue
+				var result = grid.raycast(player_coord, push_direction, ability.range - 1)
+				if result.is_empty():
+					continue
+				grid.move_to(enemy, result.back())
+				await grid.entity_moved
+
+		AbilityManager.Ability.SHIELD:
+			player.shield_value += ability.range
+
+		AbilityManager.Ability.CREATE:
+			if grid.is_unit(target_grid.selector_position):
+				var enemy = enemies.get_enemy(target_grid.selector_position)
+				if is_instance_valid(enemy):
+					grid.move(enemy, direction)
+					await grid.entity_moved
+
+			grid.set_cell(target_grid.selector_position, 0, grid.obstical_atlas_coords)

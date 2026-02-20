@@ -37,6 +37,22 @@ func clear_enemies():
 	_enemies.clear()
 
 
+func take_damage(coords: Vector2i):
+	for enemy in _enemies:
+		if _grid.get_coords(enemy) == coords:
+			# TODO: change
+			Events.debug_text.emit("Enemy hit by player")
+			#_enemies.erase(enemy)
+			#enemy.queue_free()
+
+
+func get_enemy(coords: Vector2i) -> Node2D:
+	for enemy in _enemies:
+		if _grid.get_coords(enemy) == coords:
+			return enemy
+	return null
+
+
 func move_enemies():
 	var player_pos := _grid.local_to_map(_player.position)
 
@@ -49,7 +65,7 @@ func move_enemies():
 			if direction == enemy.last_movement:
 				continue
 			var new_pos = enemy_pos + direction
-			if _grid.is_cell_blocked(new_pos) or not _grid.is_within_bounds(new_pos):
+			if not _grid.is_ground(new_pos) or not _grid.is_within_bounds(new_pos):
 				continue
 			if player_pos.distance_to(new_pos) < player_pos.distance_to(enemy_pos + move_direction):
 				move_direction = direction

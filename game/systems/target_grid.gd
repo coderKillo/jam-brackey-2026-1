@@ -15,6 +15,9 @@ var size: int = 3
 var selector_position: Vector2i = Vector2i.ZERO
 
 var _grid: Grid
+var _current_shape := Shapes.NONE
+var _position_lookup = {}
+var _current_direction := Vector2i.ZERO
 
 
 func setup(grid: Grid):
@@ -36,15 +39,25 @@ func _process(_delta):
 
 func make_shape(shape: Shapes, coord: Vector2i, distance: int):
 	clear()
+	_position_lookup.clear()
+	_current_shape = shape
+
+	selector.frame = SELECTION_INVALID
+	selector_position = coord
 
 	match shape:
 		Shapes.RING:
-			for cell in _grid.get_free_cells():
+			for cell in _grid.get_used_cells():
+				if _grid.is_obstical(cell):
+					continue
 				var diff = abs(cell - coord)
 				var distance_to_cell = diff.x + diff.y
 				if distance_to_cell <= 1 or distance_to_cell > distance:
 					continue
 				add_target_tile(cell)
+
+			selector.frame = SELECTION_INVALID
+			selector_position = coord
 
 		Shapes.RECT:
 			for x in range(-distance, distance):
@@ -54,27 +67,60 @@ func make_shape(shape: Shapes, coord: Vector2i, distance: int):
 					if (abs(x) + abs(y)) >= (distance * 2 - 1):
 						continue
 					var cell_pos = coord + Vector2i(x, y)
-					if not _grid.is_within_bounds(cell_pos) or _grid.is_cell_blocked(cell_pos):
+					if not _grid.is_within_bounds(cell_pos) or _grid.is_obstical(cell_pos):
 						continue
 					add_target_tile(cell_pos)
 
 		Shapes.CROSS:
 			for direction in DIRECTIONS:
-				raycast(coord, direction, distance)
+				var result = _grid.raycast(coord, direction, distance)
+				for cell_pos in result:
+					add_target_tile(cell_pos)
+				if not result.is_empty():
+					_position_lookup[direction] = result.back()
+					_current_direction = direction
+					selector_position = result.back()
+					selector.frame = SELECTION_VALID
 
 		Shapes.CROSS_DIAGONAL:
 			for direction in DIRECTIONS_DIAGONAL:
-				raycast(coord, direction, distance)
+				var result = _grid.raycast(coord, direction, distance)
+				for cell_pos in result:
+					add_target_tile(cell_pos)
+				if not result.is_empty():
+					_position_lookup[direction] = result.back()
+					_current_direction = direction
+					selector_position = result.back()
+					selector.frame = SELECTION_VALID
 
 		Shapes.NONE:
 			pass
 
 	selector.hide()
-	selector.frame = SELECTION_INVALID
-	selector_position = coord
 
 
 func move_selector(direction: Vector2i):
+	if direction == Vector2i.ZERO:
+		selector.show()
+
+	match _current_shape:
+		Shapes.RING:
+			_move_selector_on_grid(direction)
+
+		Shapes.RECT:
+			_move_selector_on_grid(direction)
+
+		Shapes.CROSS:
+			_move_selector_direction(direction)
+
+		Shapes.CROSS_DIAGONAL:
+			_move_selector_cross_direction(direction)
+
+		Shapes.NONE:
+			pass
+
+
+func _move_selector_on_grid(direction: Vector2i):
 	var new_pos = selector_position + direction
 	if not _grid.is_within_bounds(new_pos):
 		return
@@ -86,12 +132,29 @@ func move_selector(direction: Vector2i):
 		selector.frame = SELECTION_INVALID
 
 
-func raycast(start: Vector2i, direction: Vector2i, length: int):
-	for i in length:
-		var cell_pos = start + direction * (i + 1)
-		if not _grid.is_within_bounds(cell_pos) or _grid.is_cell_blocked(cell_pos):
-			return
-		add_target_tile(cell_pos)
+func _move_selector_direction(direction: Vector2i):
+	if not _position_lookup.has(direction):
+		return
+	selector.frame = SELECTION_VALID
+	selector.show()
+	selector_position = _position_lookup[direction]
+	_current_direction = direction
+
+
+func _move_selector_cross_direction(direction: Vector2i):
+	var new_direction = _current_direction
+	if direction.x != 0:
+		new_direction.x = direction.x
+	if direction.y != 0:
+		new_direction.y = direction.y
+
+	if not _position_lookup.has(new_direction):
+		return
+
+	selector.frame = SELECTION_VALID
+	selector.show()
+	selector_position = _position_lookup[new_direction]
+	_current_direction = new_direction
 
 
 func add_target_tile(pos: Vector2i):
@@ -104,5 +167,4 @@ func is_target_tile(pos: Vector2i):
 
 func reset():
 	selector.hide()
-	selector_position = Vector2i.ZERO
 	clear()

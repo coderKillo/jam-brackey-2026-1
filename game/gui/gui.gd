@@ -1,3 +1,4 @@
+class_name Gui
 extends Control
 
 @onready var label: RichTextLabel = $DebugText
