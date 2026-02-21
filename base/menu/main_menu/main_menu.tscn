@@ -1,9 +1,24 @@
-[gd_scene load_steps=5 format=3 uid="uid://cmmq3qk054d8m"]
+[gd_scene load_steps=7 format=3 uid="uid://cmmq3qk054d8m"]
 
 [ext_resource type="Script" uid="uid://dcr3vuytcemx4" path="res://base/menu/main_menu/main_menu.gd" id="1_1jjd6"]
 [ext_resource type="Theme" uid="uid://4r6b2cnujbph" path="res://assets/gui_assets/waste_no_space.theme" id="1_lue4o"]
 [ext_resource type="Script" uid="uid://c176p1imvld44" path="res://base/menu/main_menu/option_menu.gd" id="2_byskk"]
 [ext_resource type="Script" uid="uid://mhomivb5vuru" path="res://base/menu/main_menu/level_select.gd" id="3_luyhs"]
+[ext_resource type="Shader" uid="uid://nyoncwxnj76w" path="res://game/shader/start.gdshader" id="3_rk3xn"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xq2ug"]
+shader = ExtResource("3_rk3xn")
+shader_parameter/dimensions = Vector2(640, 360)
+shader_parameter/small_stars = 50.0
+shader_parameter/small_stars_far_size = 0.2
+shader_parameter/small_stars_near_size = 0.5
+shader_parameter/large_stars = 8.0
+shader_parameter/large_stars_far_size = 0.2
+shader_parameter/large_stars_near_size = 0.3
+shader_parameter/far_stars_color = Color(0.5, 0, 1, 1)
+shader_parameter/near_stars_color = Color(1, 1, 1, 1)
+shader_parameter/base_scroll_speed = 0.01
+shader_parameter/additional_scroll_speed = 0.01
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -25,13 +40,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Background" type="TextureRect" parent="Menu"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Background2" type="ColorRect" parent="Menu"]
+material = SubResource("ShaderMaterial_xq2ug")
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.0795004, 0.126686, 0.202238, 1)
 
 [node name="Label" type="Label" parent="Menu"]
 layout_mode = 1

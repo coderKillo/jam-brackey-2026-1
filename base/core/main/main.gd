@@ -1,7 +1,7 @@
 class_name Main
 extends Control
 
-@export var level_container: Node
+@export var level_container: Node2D
 @export var gui: Control
 
 @onready var abilities: AbilityManager = %AbilityManager
@@ -10,8 +10,12 @@ extends Control
 @onready var input: InputManager = %InputManager
 @onready var player: Player = %Player
 @onready var portal: Portal = %Portal
+@onready var stranger: Stranger = %Stranger
 @onready var grid: Grid = %Grid
 @onready var target_grid: TargetGrid = %TargetGrid
+@onready var background: Control = $Background
+
+# TODO: test event code
 
 
 func _ready():
@@ -24,24 +28,46 @@ func _ready():
 	input.setup()
 	player.setup(grid)
 	portal.setup(grid)
+	stranger.setup(grid)
 	target_grid.setup(grid)
 
 
 func _on_game_state_changed(new_state: Global.GameState):
 	match new_state:
 		Global.GameState.TRANSITION_ANIMATION:
+			var tween = get_tree().create_tween()
+			tween.tween_property(level_container, "modulate:a", 0.0, 0.2)
+			tween.tween_method(_set_star_speed, 0.01, 1.0, 0.2)
+			tween.tween_method(_set_star_speed, 1.0, 0.01, 0.2)
+			tween.tween_property(level_container, "modulate:a", 1.0, 0.2)
+			await tween.finished
 			GameManager.set_state(Global.GameState.GENERATE_LEVEL)
 
 		Global.GameState.GENERATE_LEVEL:
-			grid.generate_level(Vector2i(10, 7), 10)
+			grid.generate_level(Vector2i(9, 7), 10)
 			await grid.level_generated
 			GameManager.set_state(Global.GameState.SPAWN_ENTITIES)
 
 		Global.GameState.SPAWN_ENTITIES:
-			player.spawn()
-			await player.spawned
+			portal.start_position = grid.get_free_cells().pick_random()
 			portal.spawn()
 			await portal.spawned
+			stranger.start_position = (
+				grid
+				. get_free_cells()
+				. filter(Math.min_distance2.bind(portal.start_position, 3))
+				. pick_random()
+			)
+			stranger.spawn()
+			await stranger.spawned
+			player.start_position = (
+				grid
+				. get_free_cells()
+				. filter(Math.min_distance3.bind(portal.start_position, stranger.start_position, 2))
+				. pick_random()
+			)
+			player.spawn()
+			await player.spawned
 			enemies.spawn_enemies()
 			await enemies.enemies_spawned
 			GameManager.set_state(Global.GameState.WAIT_FOR_COMBAT_INPUT)
@@ -52,24 +78,44 @@ func _on_game_state_changed(new_state: Global.GameState):
 			GameManager.set_state(result)
 
 		Global.GameState.MOVE_PLAYER:
+			var next_state = Global.GameState.ENEMY_TURN
+			var new_player_coords = grid.get_coords(player) + input.direction
+			if new_player_coords == grid.get_coords(portal):
+				grid.set_cell(grid.get_coords(portal), 0, grid.ground_atlas_coords)
+				next_state = Global.GameState.PORTAL_REACHED
+
+			if new_player_coords == grid.get_coords(stranger):
+				grid.set_cell(grid.get_coords(stranger), 0, grid.ground_atlas_coords)
+				next_state = Global.GameState.PLAY_EVENT
+
 			grid.move(player, input.direction)
 			await grid.entity_moved
 
-			if grid.get_coords(player) == grid.get_coords(portal):
-				GameManager.set_state(Global.GameState.PORTAL_REACHED)
-				return
-
-			GameManager.set_state(Global.GameState.ENEMY_TURN)
+			GameManager.set_state(next_state)
 
 		Global.GameState.USE_ABILITY:
 			await handle_abilities()
 			GameManager.set_state(Global.GameState.ENEMY_TURN)
 
 		Global.GameState.PLAY_EVENT:
-			pass
+			events.play_event()
+			if events.event_ability == AbilityManager.Ability.EMPTY:
+				GameManager.set_state(Global.GameState.ENEMY_TURN)
+			else:
+				GameManager.set_state(Global.GameState.WAIT_FOR_EVENT_INPUT)
 
 		Global.GameState.WAIT_FOR_EVENT_INPUT:
-			pass
+			await input.input_received
+			match input.current_mode:
+				InputManager.Mode.ACCEPT:
+					if not abilities.add_ability(events.event_ability):
+						abilities.free_random_slot()
+					abilities.add_ability(events.event_ability)
+
+				InputManager.Mode.REJECT:
+					Events.ability_lost.emit(events.event_ability)
+
+			GameManager.set_state(Global.GameState.ENEMY_TURN)
 
 		Global.GameState.ENEMY_TURN:
 			enemies.move_enemies()
@@ -95,7 +141,12 @@ func handle_player_combat_input() -> Global.GameState:
 				target_grid.reset()
 				abilities.reset()
 				if input.direction != Vector2i.ZERO:
-					if grid.is_ground(grid.get_coords(player) + input.direction):
+					var new_player_coords = grid.get_coords(player) + input.direction
+					if (
+						grid.is_ground(grid.get_coords(player) + input.direction)
+						or new_player_coords == grid.get_coords(portal)
+						or new_player_coords == grid.get_coords(stranger)
+					):
 						result = Global.GameState.MOVE_PLAYER
 						break
 					else:
@@ -147,6 +198,8 @@ func handle_abilities():
 			grid.set_cell(target_grid.selector_position, 0, grid.ground_atlas_coords)
 
 		AbilityManager.Ability.LASER:
+			print(direction)
+			await player.play_laser(direction, ability.range)
 			for cell in grid.raycast(player_coord, direction, ability.range):
 				enemies.take_damage(cell)
 
@@ -162,7 +215,8 @@ func handle_abilities():
 			var end_position = player_coord + direction
 			for cell in grid.raycast(player_coord, direction, ability.range):
 				if grid.is_unit(cell):
-					grid.move_to(enemies.get_enemy(cell), end_position)
+					await player.play_hook(direction, abs(player_coord.x - cell.x))
+					grid.move_to(_get_unit(cell), end_position)
 					await grid.entity_moved
 					break
 
@@ -200,9 +254,22 @@ func handle_abilities():
 
 		AbilityManager.Ability.CREATE:
 			if grid.is_unit(target_grid.selector_position):
-				var enemy = enemies.get_enemy(target_grid.selector_position)
-				if is_instance_valid(enemy):
-					grid.move(enemy, direction)
+				var unit = _get_unit(target_grid.selector_position)
+				if is_instance_valid(unit):
+					grid.move(unit, direction)
 					await grid.entity_moved
 
 			grid.set_cell(target_grid.selector_position, 0, grid.obstical_atlas_coords)
+
+
+func _set_star_speed(value: float):
+	background.material.set_shader_parameter("base_scroll_speed", value)
+	background.material.set_shader_parameter("additional_scroll_speed", value)
+
+
+func _get_unit(coord: Vector2i) -> Node2D:
+	if grid.get_coords(stranger) == coord:
+		return stranger
+	if grid.get_coords(portal) == coord:
+		return portal
+	return enemies.get_enemy(coord)

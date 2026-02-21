@@ -1,4 +1,4 @@
-class_name Portal
+class_name Stranger
 extends Sprite2D
 
 signal spawned

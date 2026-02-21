@@ -20,7 +20,9 @@ func generate_level(size: Vector2i, obsticals_count: int):
 			set_cell(Vector2i(x, y), 0, ground_atlas_coords)
 
 	for i in range(obsticals_count):
-		set_cell(get_used_cells().pick_random(), 0, obstical_atlas_coords)
+		var random = randi() % 4
+		var atlas_coords = Vector2i(random, obstical_atlas_coords.y)
+		set_cell(get_used_cells().pick_random(), 0, atlas_coords)
 
 	await get_tree().create_timer(0.2).timeout
 	level_generated.emit()
@@ -94,7 +96,7 @@ func get_free_cells() -> Array[Vector2i]:
 
 
 func is_obstical(coords: Vector2i) -> bool:
-	return get_cell_atlas_coords(coords) == obstical_atlas_coords
+	return get_cell_atlas_coords(coords).y == obstical_atlas_coords.y
 
 
 func is_ground(coords: Vector2i) -> bool:

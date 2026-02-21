@@ -15,7 +15,7 @@ script = ExtResource("2_cjfdk")
 texture = ExtResource("3_cjfdk")
 
 [node name="Projectile" type="Node2D" parent="."]
-visible = false
+show_behind_parent = true
 
 [node name="Sprite2D" type="Sprite2D" parent="Projectile"]
 position = Vector2(1, 0)

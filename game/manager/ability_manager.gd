@@ -45,7 +45,7 @@ var _db := {
 		ability = Ability.SHOOT,
 		shape = TargetGrid.Shapes.RECT,
 		range = 3,
-		cooldown = 5,
+		cooldown = 4,
 		name = "The Soldier",
 		description = "Old veteran of many wars, hits enemies"
 	},
@@ -54,7 +54,7 @@ var _db := {
 		ability = Ability.LASER,
 		shape = TargetGrid.Shapes.CROSS,
 		range = 6,
-		cooldown = 5,
+		cooldown = 3,
 		name = "The Engineer",
 		description = "Brilliant thinker that can build laser guns and firing them"
 	},
@@ -63,7 +63,7 @@ var _db := {
 		ability = Ability.DASH,
 		shape = TargetGrid.Shapes.CROSS,
 		range = 3,
-		cooldown = 5,
+		cooldown = 4,
 		name = "The Pilot",
 		description =
 		"Expierent pilot that travel large distances with ease and crushes enemies in his path"
@@ -73,7 +73,7 @@ var _db := {
 		ability = Ability.HOOK,
 		shape = TargetGrid.Shapes.CROSS_DIAGONAL,
 		range = 4,
-		cooldown = 5,
+		cooldown = 2,
 		name = "The Smuggler",
 		description =
 		"Years in the business taugth him how get what he wants, can pull enemies to you"
@@ -83,7 +83,7 @@ var _db := {
 		ability = Ability.BLINK,
 		shape = TargetGrid.Shapes.RING,
 		range = 3,
-		cooldown = 5,
+		cooldown = 4,
 		name = "The Navigator",
 		description = "Can find wormholes to teleport you to a close location"
 	},
@@ -92,7 +92,7 @@ var _db := {
 		ability = Ability.PUSH,
 		shape = TargetGrid.Shapes.NONE,
 		range = 2,
-		cooldown = 10,
+		cooldown = 3,
 		name = "The Psyker",
 		description = "Born with a mind that can control energy, can push enemies away"
 	},
@@ -101,7 +101,7 @@ var _db := {
 		ability = Ability.SHIELD,
 		shape = TargetGrid.Shapes.NONE,
 		range = 2,
-		cooldown = 4,
+		cooldown = 3,
 		name = "The Scientist",
 		description = "Crazy thinker that always carries his shield genertor with him"
 	},
@@ -110,7 +110,7 @@ var _db := {
 		ability = Ability.CREATE,
 		shape = TargetGrid.Shapes.RECT,
 		range = 4,
-		cooldown = 5,
+		cooldown = 4,
 		name = "The Outlander",
 		description = "His ability to create matter is unlike any other"
 	},
@@ -145,8 +145,28 @@ func select_slot(slot_index: int):
 	slot_index_changed.emit(slot_index)
 
 
+func add_ability(ability: Ability) -> bool:
+	for slot_index in slot_count:
+		if _slots[slot_index].ability == Ability.EMPTY:
+			_set_ability(ability, slot_index)
+			return true
+	return false
+
+
+func free_random_slot() -> void:
+	var slots_with_abilites = []
+	for slot_index in slot_count:
+		if _slots[slot_index].ability in [Ability.EMPTY, Ability.PLAYER]:
+			continue
+		slots_with_abilites.append(slot_index)
+
+	var freed_slot = slots_with_abilites.pick_random()
+	Events.ability_lost.emit(_slots[freed_slot].ability)
+	_slots[freed_slot] = Slot.new()
+
+
 func cast_ability(slot_index: int):
-	_slots[slot_index].cooldown = get_ability(slot_index).cooldown
+	_slots[slot_index].cooldown = get_ability(slot_index).cooldown + 1
 	slots_changed.emit()
 
 

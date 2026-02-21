@@ -40,10 +40,9 @@ func clear_enemies():
 func take_damage(coords: Vector2i):
 	for enemy in _enemies:
 		if _grid.get_coords(enemy) == coords:
-			# TODO: change
-			Events.debug_text.emit("Enemy hit by player")
-			#_enemies.erase(enemy)
-			#enemy.queue_free()
+			_grid.set_cell(coords, 0, _grid.ground_atlas_coords)
+			_enemies.erase(enemy)
+			enemy.queue_free()
 
 
 func get_enemy(coords: Vector2i) -> Node2D:

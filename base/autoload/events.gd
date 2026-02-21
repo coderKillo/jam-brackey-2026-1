@@ -9,3 +9,5 @@ signal debug_text(text: String)
 signal slot_count_changed(count: int)
 
 signal camera_shake(intensity: float)
+
+signal ability_lost(ability: AbilityManager.Ability)

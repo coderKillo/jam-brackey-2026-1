@@ -15,3 +15,5 @@ enum GameState {
 	HANDLE_DAMAGE,
 	PORTAL_REACHED,
 }
+
+const CELL_SIZE = 32

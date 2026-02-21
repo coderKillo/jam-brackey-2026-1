@@ -6,6 +6,9 @@ enum Mode {
 	SELECT_ABILITY,
 	SELECT_CELL,
 	CAST_ABILITY,
+	EVENT,
+	ACCEPT,
+	REJECT,
 }
 
 signal input_received
@@ -87,11 +90,22 @@ func _process(_delta):
 			elif Input.is_action_just_pressed("cancel"):
 				cancel()
 
+		Mode.EVENT:
+			if Input.is_action_just_pressed("action"):
+				current_mode = Mode.ACCEPT
+			elif Input.is_action_just_pressed("cancel"):
+				current_mode = Mode.REJECT
+
 
 func _on_game_state_changed(state: Global.GameState):
 	match state:
 		Global.GameState.WAIT_FOR_COMBAT_INPUT:
 			reset()
+			current_mode = Mode.MOVEMENT
+			_active = true
+		Global.GameState.WAIT_FOR_EVENT_INPUT:
+			reset()
+			current_mode = Mode.EVENT
 			_active = true
 		_:
 			_active = false

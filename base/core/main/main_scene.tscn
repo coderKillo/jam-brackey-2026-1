@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=4 uid="uid://b6pacd4qux0r0"]
+[gd_scene load_steps=36 format=4 uid="uid://b6pacd4qux0r0"]
 
 [ext_resource type="Script" uid="uid://xwkwmj6gqkg7" path="res://base/core/main/main.gd" id="1_awp0h"]
 [ext_resource type="Theme" uid="uid://4r6b2cnujbph" path="res://assets/gui_assets/waste_no_space.theme" id="1_gjp0b"]
@@ -17,12 +17,14 @@
 [ext_resource type="Script" uid="uid://b6kewchuy3qid" path="res://game/manager/input_manager.gd" id="7_x0q8c"]
 [ext_resource type="Texture2D" uid="uid://di4al6jhh08h4" path="res://assets/target.png" id="8_ax4ej"]
 [ext_resource type="Script" uid="uid://ulm6txsb2ukr" path="res://game/systems/target_grid.gd" id="8_cyqf4"]
+[ext_resource type="Script" uid="uid://fvkjqu8llo87" path="res://game/systems/stranger.gd" id="8_eb0yd"]
 [ext_resource type="Texture2D" uid="uid://ckb2yqnexf821" path="res://assets/arrow.png" id="9_oh5ki"]
 [ext_resource type="Texture2D" uid="uid://cg3qoxxexdsu7" path="res://assets/selector.png" id="10_0h0lk"]
 [ext_resource type="FontFile" uid="uid://pntlljl77f2n" path="res://assets/gui_assets/fonts/Poco.ttf" id="11_es3kw"]
 [ext_resource type="Script" uid="uid://8kvpo5a7ghur" path="res://game/systems/camera_2d.gd" id="14_c8pys"]
 [ext_resource type="Script" uid="uid://dmrxwkfph6acd" path="res://game/gui/selector_gui.gd" id="15_b46tn"]
 [ext_resource type="Script" uid="uid://g8qpbdyyb824" path="res://game/gui/key_gui.gd" id="17_l3rmk"]
+[ext_resource type="Script" uid="uid://b2rsxpecj1lbh" path="res://game/gui/event_gui.gd" id="20_htuni"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_l3rmk"]
 shader = ExtResource("3_b46tn")
@@ -44,7 +46,11 @@ texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 2:0/0 = 0
 0:1/0 = 0
+0:2/next_alternative_id = 2
 0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_ma400"]
 tile_size = Vector2i(32, 32)
@@ -117,7 +123,6 @@ position = Vector2(320, 180)
 
 [node name="Grid" type="TileMapLayer" parent="World"]
 unique_name_in_owner = true
-self_modulate = Color(1, 1, 1, 0.34902)
 position = Vector2(0, -36)
 tile_map_data = PackedByteArray("AAD7//3/AAAAAAAAAAD7//7/AAAAAAAAAAD7////AAAAAAAAAAD7/wAAAAAAAAAAAAD7/wEAAAAAAAAAAAD7/wIAAAAAAAAAAAD8//3/AAAAAAAAAAD8//7/AAAAAAAAAAD8////AAAAAAAAAAD8/wAAAAAAAAAAAAD8/wEAAAAAAAAAAAD8/wIAAAAAAAAAAAD9//3/AAAAAAAAAAD9//7/AAAAAAAAAAD9////AAAAAAAAAAD9/wAAAAAAAAAAAAD9/wEAAAAAAAAAAAD9/wIAAAAAAAAAAAD+//3/AAAAAAAAAAD+//7/AAAAAAAAAAD+////AAAAAAAAAAD+/wAAAAAAAAAAAAD+/wEAAAAAAAAAAAD+/wIAAAAAAAAAAAD///3/AAAAAAAAAAD///7/AAAAAAAAAAD/////AAAAAAAAAAD//wAAAAAAAAAAAAD//wEAAAAAAAAAAAD//wIAAAAAAAAAAAAAAP3/AAAAAAAAAAAAAP7/AAAAAAAAAAAAAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAABAP3/AAAAAAAAAAABAP7/AAAAAAAAAAABAP//AAAAAAAAAAABAAAAAAAAAAAAAAABAAEAAAAAAAAAAAABAAIAAAAAAAAAAAACAP3/AAAAAAAAAAACAP7/AAAAAAAAAAACAP//AAAAAAAAAAACAAAAAAAAAAAAAAACAAEAAAAAAAAAAAACAAIAAAAAAAAAAAADAP3/AAAAAAAAAAADAP7/AAAAAAAAAAADAP//AAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAADAAIAAAAAAAAAAAAEAP3/AAAAAAAAAAAEAP7/AAAAAAAAAAAEAP//AAAAAAAAAAAEAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAAEAAIAAAAAAAAAAAA=")
 tile_set = SubResource("TileSet_ma400")
@@ -136,6 +141,14 @@ texture = SubResource("CompressedTexture2D_ugwa6")
 region_enabled = true
 region_rect = Rect2(128, 0, 32, 32)
 script = ExtResource("5_x0q8c")
+
+[node name="Stranger" type="Sprite2D" parent="World/Grid"]
+unique_name_in_owner = true
+visible = false
+texture = ExtResource("2_qe2dj")
+region_enabled = true
+region_rect = Rect2(160, 0, 32, 32)
+script = ExtResource("8_eb0yd")
 
 [node name="CouchModel" type="Node2D" parent="World" node_paths=PackedStringArray("ability_manager")]
 position = Vector2(0, 144)
@@ -292,6 +305,76 @@ offset_right = 20.0
 offset_bottom = 15.0
 grow_horizontal = 2
 text = "WASD: SELECT TARGET   SPACE: ACCEPT    Q: CANCLE"
+
+[node name="EventGui" type="Control" parent="CanvasLayer/Gui"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("20_htuni")
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/Gui/EventGui"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.4)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Gui/EventGui"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/Gui/EventGui/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "THE PILOT"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Gui/EventGui/VBoxContainer"]
+layout_mode = 2
+
+[node name="Body" type="RichTextLabel" parent="CanvasLayer/Gui/EventGui/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 160)
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("11_es3kw")
+theme_override_font_sizes/normal_font_size = 15
+text = "Some test text"
+fit_content = true
+
+[node name="Image" type="TextureRect" parent="CanvasLayer/Gui/EventGui/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="CanvasLayer/Gui/EventGui/VBoxContainer"]
+layout_mode = 2
+text = "should this stranger join you?"
+horizontal_alignment = 1
+
+[node name="Label4" type="Label" parent="CanvasLayer/Gui/EventGui/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_es3kw")
+theme_override_font_sizes/font_size = 10
+text = "(you will use a random stranger if there is no space)"
+horizontal_alignment = 1
+
+[node name="Label3" type="Label" parent="CanvasLayer/Gui/EventGui/VBoxContainer"]
+layout_mode = 2
+text = "SPACE: ACCEPT       Q:REJECT"
+horizontal_alignment = 1
 
 [node name="Managers" type="Node2D" parent="."]
 
