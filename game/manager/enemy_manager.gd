@@ -9,6 +9,8 @@ signal enemies_spawned
 @export var enemy_count := 2
 @export var enemy_scene: PackedScene
 
+var total_damage := 0
+
 var _grid: Grid
 var _player: Player
 var _enemies: Array[Node2D]
@@ -28,6 +30,7 @@ func spawn_enemies():
 			enemy.hide()
 			await VfxManager.spawn_effect(VfxManager.Effect.SPAWN, enemy.global_position, 3)
 			enemy.show()
+	await get_tree().create_timer(0.2).timeout
 	enemies_spawned.emit()
 
 
@@ -42,6 +45,7 @@ func take_damage(coords: Vector2i):
 		if _grid.get_coords(enemy) == coords:
 			_grid.set_cell(coords, 0, _grid.ground_atlas_coords)
 			_enemies.erase(enemy)
+			VfxManager.spawn_effect(VfxManager.Effect.EXPLOSION, enemy.global_position)
 			enemy.queue_free()
 
 
@@ -75,8 +79,9 @@ func move_enemies():
 		## update position
 		enemy_pos = _grid.local_to_map(enemy.position)
 		if player_pos in _grid.get_surrounding_cells(enemy_pos):
-			var damage = enemy.attack_player()
-			Events.debug_text.emit("Player hit by " + str(damage))
+			await VfxManager.spawn_effect(VfxManager.Effect.SLASH, _player.global_position)
+			Events.camera_shake.emit(0.8)
+			total_damage += enemy.attack_player()
 
 	await get_tree().create_timer(0.2).timeout
 	enemies_moved.emit()

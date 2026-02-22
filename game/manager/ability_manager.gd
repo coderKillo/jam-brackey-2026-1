@@ -36,7 +36,7 @@ class Slot:
 	var cooldown := 0
 
 
-@export var slot_count: int = 10
+@export var slot_count: int = 3
 
 var _slots: Array[Slot]
 var _db := {
@@ -44,6 +44,7 @@ var _db := {
 	{
 		ability = Ability.SHOOT,
 		shape = TargetGrid.Shapes.RECT,
+		texture = preload("res://assets/characters/soldier.png"),
 		range = 3,
 		cooldown = 4,
 		name = "The Soldier",
@@ -53,6 +54,7 @@ var _db := {
 	{
 		ability = Ability.LASER,
 		shape = TargetGrid.Shapes.CROSS,
+		texture = preload("res://assets/characters/engineer.png"),
 		range = 6,
 		cooldown = 3,
 		name = "The Engineer",
@@ -62,6 +64,7 @@ var _db := {
 	{
 		ability = Ability.DASH,
 		shape = TargetGrid.Shapes.CROSS,
+		texture = preload("res://assets/characters/pilot.png"),
 		range = 3,
 		cooldown = 4,
 		name = "The Pilot",
@@ -72,6 +75,7 @@ var _db := {
 	{
 		ability = Ability.HOOK,
 		shape = TargetGrid.Shapes.CROSS_DIAGONAL,
+		texture = preload("res://assets/characters/smuggler.png"),
 		range = 4,
 		cooldown = 2,
 		name = "The Smuggler",
@@ -82,6 +86,7 @@ var _db := {
 	{
 		ability = Ability.BLINK,
 		shape = TargetGrid.Shapes.RING,
+		texture = preload("res://assets/characters/navigator.png"),
 		range = 3,
 		cooldown = 4,
 		name = "The Navigator",
@@ -91,6 +96,7 @@ var _db := {
 	{
 		ability = Ability.PUSH,
 		shape = TargetGrid.Shapes.NONE,
+		texture = preload("res://assets/characters/psyker.png"),
 		range = 2,
 		cooldown = 3,
 		name = "The Psyker",
@@ -100,6 +106,7 @@ var _db := {
 	{
 		ability = Ability.SHIELD,
 		shape = TargetGrid.Shapes.NONE,
+		texture = preload("res://assets/characters/scientist.png"),
 		range = 2,
 		cooldown = 3,
 		name = "The Scientist",
@@ -109,10 +116,21 @@ var _db := {
 	{
 		ability = Ability.CREATE,
 		shape = TargetGrid.Shapes.RECT,
+		texture = preload("res://assets/characters/outlander.png"),
 		range = 4,
 		cooldown = 4,
 		name = "The Outlander",
 		description = "His ability to create matter is unlike any other"
+	},
+	Ability.PLAYER:
+	{
+		ability = Ability.PLAYER,
+		shape = TargetGrid.Shapes.NONE,
+		texture = preload("res://assets/characters/player.png"),
+		range = 0,
+		cooldown = 0,
+		name = "The Adventurer",
+		description = "Just you"
 	},
 }
 
@@ -127,18 +145,22 @@ func setup():
 
 	_set_ability(Ability.PLAYER, floori(slot_count / 2.0))
 
-	## TODO: remove this, just for testing
-	_set_ability(Ability.SHOOT, 0)
-	_set_ability(Ability.LASER, 1)
-	_set_ability(Ability.DASH, 2)
-	_set_ability(Ability.SHIELD, 3)
-	_set_ability(Ability.HOOK, 6)
-	_set_ability(Ability.BLINK, 7)
-	_set_ability(Ability.PUSH, 8)
-	_set_ability(Ability.CREATE, 9)
-
 	Events.slot_count_changed.emit(slot_count)
 	reset()
+
+
+func update_slot_count(new_count: int):
+	if new_count == slot_count:
+		return
+
+	if new_count < slot_count:
+		slot_count = new_count
+		setup()
+	else:
+		for i in new_count - slot_count:
+			_slots.append(Slot.new())
+		slot_count = new_count
+	Events.slot_count_changed.emit(slot_count)
 
 
 func select_slot(slot_index: int):
@@ -153,16 +175,19 @@ func add_ability(ability: Ability) -> bool:
 	return false
 
 
-func free_random_slot() -> void:
+func free_random_slot() -> bool:
 	var slots_with_abilites = []
 	for slot_index in slot_count:
 		if _slots[slot_index].ability in [Ability.EMPTY, Ability.PLAYER]:
 			continue
 		slots_with_abilites.append(slot_index)
 
+	if slots_with_abilites.is_empty():
+		return false
 	var freed_slot = slots_with_abilites.pick_random()
 	Events.ability_lost.emit(_slots[freed_slot].ability)
 	_slots[freed_slot] = Slot.new()
+	return true
 
 
 func cast_ability(slot_index: int):
@@ -175,6 +200,7 @@ func get_ability(slot_index: int) -> Dictionary:
 		return {
 			ability = Ability.EMPTY,
 			shape = TargetGrid.Shapes.NONE,
+			texture = Texture.new(),
 			range = 0,
 			cooldown = 0,
 			name = "",

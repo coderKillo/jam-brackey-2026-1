@@ -15,7 +15,7 @@ extends Control
 @onready var target_grid: TargetGrid = %TargetGrid
 @onready var background: Control = $Background
 
-# TODO: test event code
+var current_stage := 0
 
 
 func _ready():
@@ -42,6 +42,10 @@ func _on_game_state_changed(new_state: Global.GameState):
 			tween.tween_property(level_container, "modulate:a", 1.0, 0.2)
 			await tween.finished
 			GameManager.set_state(Global.GameState.GENERATE_LEVEL)
+			enemies.enemy_count = ceili(current_stage / 5.0)
+			abilities.update_slot_count(ceili(current_stage / 4.0) + 3)
+			current_stage += 1
+			%StageLabel.text = "stage %s" % current_stage
 
 		Global.GameState.GENERATE_LEVEL:
 			grid.generate_level(Vector2i(9, 7), 10)
@@ -99,31 +103,42 @@ func _on_game_state_changed(new_state: Global.GameState):
 
 		Global.GameState.PLAY_EVENT:
 			events.play_event()
+			grid.set_cell(grid.get_coords(stranger), 0, grid.ground_atlas_coords)
+			stranger.global_position = Vector2(5000, 5000)
 			if events.event_ability == AbilityManager.Ability.EMPTY:
 				GameManager.set_state(Global.GameState.ENEMY_TURN)
 			else:
 				GameManager.set_state(Global.GameState.WAIT_FOR_EVENT_INPUT)
 
 		Global.GameState.WAIT_FOR_EVENT_INPUT:
-			await input.input_received
-			match input.current_mode:
-				InputManager.Mode.ACCEPT:
-					if not abilities.add_ability(events.event_ability):
-						abilities.free_random_slot()
-					abilities.add_ability(events.event_ability)
+			while true:
+				await input.input_received
+				match input.current_mode:
+					InputManager.Mode.ACCEPT:
+						if not abilities.add_ability(events.event_ability):
+							abilities.free_random_slot()
+							abilities.add_ability(events.event_ability)
+						break
 
-				InputManager.Mode.REJECT:
-					Events.ability_lost.emit(events.event_ability)
+					InputManager.Mode.REJECT:
+						Events.ability_lost.emit(events.event_ability)
+						break
+					_:
+						continue
 
 			GameManager.set_state(Global.GameState.ENEMY_TURN)
 
 		Global.GameState.ENEMY_TURN:
 			enemies.move_enemies()
 			await enemies.enemies_moved
-			GameManager.set_state(Global.GameState.WAIT_FOR_COMBAT_INPUT)
+			GameManager.set_state(Global.GameState.HANDLE_DAMAGE)
 
 		Global.GameState.HANDLE_DAMAGE:
-			pass
+			for i in enemies.total_damage:
+				if not abilities.free_random_slot():
+					Events.level_lose.emit()
+
+			GameManager.set_state(Global.GameState.WAIT_FOR_COMBAT_INPUT)
 
 		Global.GameState.PORTAL_REACHED:
 			enemies.clear_enemies()

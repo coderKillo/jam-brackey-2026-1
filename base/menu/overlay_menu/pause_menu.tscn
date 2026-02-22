@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bxiiq0m66uinu"]
+[gd_scene load_steps=3 format=3 uid="uid://bxiiq0m66uinu"]
 
+[ext_resource type="Theme" uid="uid://4r6b2cnujbph" path="res://assets/gui_assets/waste_no_space.theme" id="1_3qsxw"]
 [ext_resource type="Script" uid="uid://yc75g1bs3cuu" path="res://base/menu/overlay_menu/pause_menu.gd" id="1_nuc8v"]
 
 [node name="PauseMenu" type="Control"]
@@ -10,6 +11,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_3qsxw")
 script = ExtResource("1_nuc8v")
 
 [node name="ColorRect" type="ColorRect" parent="."]

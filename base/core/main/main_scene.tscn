@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=4 uid="uid://b6pacd4qux0r0"]
+[gd_scene load_steps=38 format=4 uid="uid://b6pacd4qux0r0"]
 
 [ext_resource type="Script" uid="uid://xwkwmj6gqkg7" path="res://base/core/main/main.gd" id="1_awp0h"]
 [ext_resource type="Theme" uid="uid://4r6b2cnujbph" path="res://assets/gui_assets/waste_no_space.theme" id="1_gjp0b"]
@@ -25,6 +25,8 @@
 [ext_resource type="Script" uid="uid://dmrxwkfph6acd" path="res://game/gui/selector_gui.gd" id="15_b46tn"]
 [ext_resource type="Script" uid="uid://g8qpbdyyb824" path="res://game/gui/key_gui.gd" id="17_l3rmk"]
 [ext_resource type="Script" uid="uid://b2rsxpecj1lbh" path="res://game/gui/event_gui.gd" id="20_htuni"]
+[ext_resource type="Texture2D" uid="uid://c3ns506cygwl2" path="res://assets/characters/character_placeholder.png" id="21_57fuq"]
+[ext_resource type="AudioStream" uid="uid://b7j1vy1eaii15" path="res://assets/music/01 Falling Organ.mp3" id="27_hhr1e"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_l3rmk"]
 shader = ExtResource("3_b46tn")
@@ -35,7 +37,7 @@ shader_parameter/small_stars_near_size = 0.5
 shader_parameter/large_stars = 8.0
 shader_parameter/large_stars_far_size = 0.2
 shader_parameter/large_stars_near_size = 0.3
-shader_parameter/far_stars_color = Color(0.5, 0, 1, 1)
+shader_parameter/far_stars_color = Color(0.733333, 0.227451, 0.827451, 1)
 shader_parameter/near_stars_color = Color(1, 1, 1, 1)
 shader_parameter/base_scroll_speed = 0.01
 shader_parameter/additional_scroll_speed = 0.01
@@ -116,7 +118,7 @@ material = SubResource("ShaderMaterial_l3rmk")
 layout_mode = 0
 offset_right = 640.0
 offset_bottom = 360.0
-color = Color(0.0795004, 0.126686, 0.202238, 1)
+color = Color(0.101961, 0.0627451, 0.266667, 1)
 
 [node name="World" type="Node2D" parent="."]
 position = Vector2(320, 180)
@@ -168,7 +170,7 @@ hframes = 2
 
 [node name="TargetGrid" type="TileMapLayer" parent="World"]
 unique_name_in_owner = true
-self_modulate = Color(1, 0.24, 0.24, 0.47451)
+self_modulate = Color(0.85, 0.187, 0.50745, 0.509804)
 position = Vector2(0, -36)
 tile_set = SubResource("TileSet_w3pcb")
 script = ExtResource("8_cyqf4")
@@ -196,15 +198,15 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("6_3p8nd")
 
-[node name="DebugText" type="RichTextLabel" parent="CanvasLayer/Gui"]
-custom_minimum_size = Vector2(150, 300)
+[node name="StageLabel" type="Label" parent="CanvasLayer/Gui"]
+unique_name_in_owner = true
 layout_mode = 0
-offset_left = 4.0
-offset_top = 3.0
-offset_right = 12.13
-offset_bottom = 123.0
-theme_override_font_sizes/normal_font_size = 16
-scroll_following = true
+offset_left = 27.0
+offset_top = 14.0
+offset_right = 122.0
+offset_bottom = 43.0
+theme_override_font_sizes/font_size = 31
+text = "stage 1"
 
 [node name="SelectorGui" type="PanelContainer" parent="CanvasLayer/Gui" node_paths=PackedStringArray("ability_manager", "input_manager")]
 layout_mode = 1
@@ -306,7 +308,8 @@ offset_bottom = 15.0
 grow_horizontal = 2
 text = "WASD: SELECT TARGET   SPACE: ACCEPT    Q: CANCLE"
 
-[node name="EventGui" type="Control" parent="CanvasLayer/Gui"]
+[node name="EventGui" type="Control" parent="CanvasLayer/Gui" node_paths=PackedStringArray("event_manager", "ability_manager")]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -314,6 +317,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("20_htuni")
+event_manager = NodePath("../../../Managers/EventManager")
+ability_manager = NodePath("../../../Managers/AbilityManager")
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer/Gui/EventGui"]
 layout_mode = 1
@@ -325,7 +330,7 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.4)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Gui/EventGui"]
-custom_minimum_size = Vector2(200, 0)
+custom_minimum_size = Vector2(400, 0)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -338,6 +343,15 @@ offset_right = 20.0
 offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = -10
+
+[node name="Label5" type="Label" parent="CanvasLayer/Gui/EventGui/VBoxContainer"]
+custom_minimum_size = Vector2(0, 24.29)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_es3kw")
+theme_override_font_sizes/font_size = 15
+text = "you found:"
+horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="CanvasLayer/Gui/EventGui/VBoxContainer"]
 layout_mode = 2
@@ -349,30 +363,37 @@ horizontal_alignment = 1
 layout_mode = 2
 
 [node name="Body" type="RichTextLabel" parent="CanvasLayer/Gui/EventGui/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(100, 160)
+custom_minimum_size = Vector2(200, 180)
 layout_mode = 2
 theme_override_fonts/normal_font = ExtResource("11_es3kw")
 theme_override_font_sizes/normal_font_size = 15
 text = "Some test text"
 fit_content = true
+vertical_alignment = 1
 
 [node name="Image" type="TextureRect" parent="CanvasLayer/Gui/EventGui/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
+texture = ExtResource("21_57fuq")
+stretch_mode = 5
 
 [node name="Label2" type="Label" parent="CanvasLayer/Gui/EventGui/VBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 25
 text = "should this stranger join you?"
 horizontal_alignment = 1
 
 [node name="Label4" type="Label" parent="CanvasLayer/Gui/EventGui/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_es3kw")
-theme_override_font_sizes/font_size = 10
-text = "(you will use a random stranger if there is no space)"
+theme_override_font_sizes/font_size = 15
+text = "(you will lose a random stranger if there is no space)"
 horizontal_alignment = 1
 
 [node name="Label3" type="Label" parent="CanvasLayer/Gui/EventGui/VBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 25
 text = "SPACE: ACCEPT       Q:REJECT"
 horizontal_alignment = 1
 
@@ -395,3 +416,7 @@ script = ExtResource("6_ugwa6")
 [node name="InputManager" type="Node2D" parent="Managers"]
 unique_name_in_owner = true
 script = ExtResource("7_x0q8c")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("27_hhr1e")
+autoplay = true

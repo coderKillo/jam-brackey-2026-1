@@ -18,7 +18,7 @@ func _on_game_state_changed(state: Global.GameState):
 	if state != Global.GameState.WAIT_FOR_EVENT_INPUT:
 		hide()
 		return
-	if ability_manager._db.has(event_manager.event_ability):
+	if not ability_manager._db.has(event_manager.event_ability):
 		return
 
 	show()
@@ -28,3 +28,4 @@ func _on_game_state_changed(state: Global.GameState):
 	body_label.text = ability.description
 	body_label.text += "\nrange: " + str(ability.range) + " tiles"
 	body_label.text += "\ncooldown: " + str(ability.cooldown) + " turns"
+	image.texture = ability.texture

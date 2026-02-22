@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://dvm8aoo8xb6an"]
+[gd_scene load_steps=4 format=3 uid="uid://dvm8aoo8xb6an"]
 
+[ext_resource type="Theme" uid="uid://4r6b2cnujbph" path="res://assets/gui_assets/waste_no_space.theme" id="1_arlhe"]
 [ext_resource type="Script" uid="uid://dk4r15rsdgfso" path="res://base/menu/overlay_menu/lose_menu.gd" id="1_l4nqj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l4nqj"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="LoseMenu" type="Control"]
 process_mode = 3
@@ -10,6 +14,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_arlhe")
 script = ExtResource("1_l4nqj")
 
 [node name="ColorRect" type="ColorRect" parent="."]
@@ -32,6 +37,7 @@ grow_vertical = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_l4nqj")
 
 [node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
 layout_mode = 2
@@ -45,7 +51,8 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "You died!"
+theme_override_font_sizes/font_size = 20
+text = "You are lost in space!"
 horizontal_alignment = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]

@@ -58,14 +58,18 @@ func setup(slots: int):
 func update_slots():
 	for index in ability_manager.slot_count:
 		var slot := ability_manager._slots[index] as AbilityManager.Slot
+		var ability := ability_manager.get_ability(index)
 		if not is_instance_valid(slot):
 			continue
+
 		var cooldown_label := _slots[index].get_node("Label") as Label
-		if slot.cooldown > 0:
-			cooldown_label.show()
-			cooldown_label.text = str(slot.cooldown)
-		else:
-			cooldown_label.hide()
+		cooldown_label.text = str(slot.cooldown)
+		cooldown_label.visible = slot.cooldown > 0
+
+		var character_sprite := _slots[index].get_node("Character") as Sprite2D
+		character_sprite.texture = ability.texture
+		character_sprite.visible = slot.ability != AbilityManager.Ability.EMPTY
+		character_sprite.modulate.a = 0.4 if slot.cooldown > 0 else 1.0
 
 
 func select(slot_index: int, valid: bool):

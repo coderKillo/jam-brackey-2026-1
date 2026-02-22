@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://cmmq3qk054d8m"]
+[gd_scene load_steps=8 format=3 uid="uid://cmmq3qk054d8m"]
 
 [ext_resource type="Script" uid="uid://dcr3vuytcemx4" path="res://base/menu/main_menu/main_menu.gd" id="1_1jjd6"]
 [ext_resource type="Theme" uid="uid://4r6b2cnujbph" path="res://assets/gui_assets/waste_no_space.theme" id="1_lue4o"]
 [ext_resource type="Script" uid="uid://c176p1imvld44" path="res://base/menu/main_menu/option_menu.gd" id="2_byskk"]
 [ext_resource type="Script" uid="uid://mhomivb5vuru" path="res://base/menu/main_menu/level_select.gd" id="3_luyhs"]
 [ext_resource type="Shader" uid="uid://nyoncwxnj76w" path="res://game/shader/start.gdshader" id="3_rk3xn"]
+[ext_resource type="AudioStream" uid="uid://b7j1vy1eaii15" path="res://assets/music/01 Falling Organ.mp3" id="3_xq2ug"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xq2ug"]
 shader = ExtResource("3_rk3xn")
@@ -31,6 +32,8 @@ theme = ExtResource("1_lue4o")
 script = ExtResource("1_1jjd6")
 
 [node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_xq2ug")
+autoplay = true
 
 [node name="Menu" type="Control" parent="."]
 layout_mode = 1
@@ -52,13 +55,28 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -90.0
-offset_top = 50.0
-offset_right = 90.0
-offset_bottom = 92.0
+offset_left = -150.0
+offset_top = 44.0
+offset_right = 150.0
+offset_bottom = 91.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 50
-text = "Game Name"
+text = "couchsurfing "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="Menu"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -143.0
+offset_top = 75.0
+offset_right = 138.0
+offset_bottom = 117.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "to the Galaxy "
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -69,10 +87,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -49.5
-offset_top = -135.5
-offset_right = 49.5
-offset_bottom = 135.5
+offset_left = -60.0
+offset_top = -90.0
+offset_right = 60.0
+offset_bottom = 181.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_top = 100
@@ -82,20 +100,10 @@ custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Continue" type="Button" parent="Menu/MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Continue"
-
 [node name="NewGame" type="Button" parent="Menu/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "New Game"
-
-[node name="LevelSelect" type="Button" parent="Menu/MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Select Level"
 
 [node name="Options" type="Button" parent="Menu/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -165,7 +173,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_vertical = 1
-max_value = 20.0
+max_value = 3.0
 step = 0.1
 
 [node name="Music" type="HBoxContainer" parent="Option/MarginContainer/PanelContainer/MarginContainer/CenterContainer/VBoxContainer"]
@@ -182,7 +190,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_vertical = 1
-max_value = 20.0
+max_value = 3.0
 step = 0.1
 
 [node name="SFX" type="HBoxContainer" parent="Option/MarginContainer/PanelContainer/MarginContainer/CenterContainer/VBoxContainer"]
@@ -199,7 +207,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_vertical = 1
-max_value = 20.0
+max_value = 3.0
 step = 0.1
 
 [node name="Mute" type="HBoxContainer" parent="Option/MarginContainer/PanelContainer/MarginContainer/CenterContainer/VBoxContainer"]

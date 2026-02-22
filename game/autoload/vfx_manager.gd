@@ -1,8 +1,12 @@
 extends Node2D
 
-enum Effect { SPAWN }
+enum Effect { SPAWN, SLASH, EXPLOSION }
 
-var _db = {Effect.SPAWN: preload("res://game/vfx/spawn.tscn")}
+var _db = {
+	Effect.SPAWN: preload("res://game/vfx/spawn.tscn"),
+	Effect.SLASH: preload("res://game/vfx/slash.tscn"),
+	Effect.EXPLOSION: preload("res://game/vfx/explosion.tscn")
+}
 
 
 func spawn_effect(effect: Effect, effect_position: Vector2, feedback_frame: int = -1) -> void:

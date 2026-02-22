@@ -22,7 +22,7 @@ static func get_bus_volume(bus_index: int) -> float:
 	var initial_linear = 1.0
 	if initial_bus_volumes.size() > bus_index:
 		initial_linear = initial_bus_volumes[bus_index]
-	var linear = db_to_linear(AudioServer.get_bus_volume_db(bus_index))
+	var linear = AudioServer.get_bus_volume_linear(bus_index)
 	linear /= initial_linear
 	return linear
 
@@ -32,7 +32,7 @@ static func set_bus_volume(bus_index: int, linear: float) -> void:
 	if initial_bus_volumes.size() > bus_index:
 		initial_linear = initial_bus_volumes[bus_index]
 	linear *= initial_linear
-	AudioServer.set_bus_volume_db(bus_index, linear_to_db(linear))
+	AudioServer.set_bus_volume_linear(bus_index, linear)
 	Config.set_config(AUDIO_SECTION, get_audio_bus_name(bus_index).to_pascal_case(), linear)
 
 
