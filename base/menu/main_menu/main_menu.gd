@@ -16,6 +16,7 @@ func _ready():
 	$Version.text = GameState.get_version()
 
 	if OS.has_feature("web"):
+		%Title.hide()
 		%Quit.hide()
 
 

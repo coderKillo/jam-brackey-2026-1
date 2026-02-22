@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cmmq3qk054d8m"]
+[gd_scene load_steps=10 format=3 uid="uid://cmmq3qk054d8m"]
 
 [ext_resource type="Script" uid="uid://dcr3vuytcemx4" path="res://base/menu/main_menu/main_menu.gd" id="1_1jjd6"]
 [ext_resource type="Theme" uid="uid://4r6b2cnujbph" path="res://assets/gui_assets/waste_no_space.theme" id="1_lue4o"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://mhomivb5vuru" path="res://base/menu/main_menu/level_select.gd" id="3_luyhs"]
 [ext_resource type="Shader" uid="uid://nyoncwxnj76w" path="res://game/shader/start.gdshader" id="3_rk3xn"]
 [ext_resource type="AudioStream" uid="uid://b7j1vy1eaii15" path="res://assets/music/01 Falling Organ.mp3" id="3_xq2ug"]
+[ext_resource type="Texture2D" uid="uid://33utot2hfqfc" path="res://assets/itch/banner.png" id="5_obtv4"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xq2ug"]
 shader = ExtResource("3_rk3xn")
@@ -16,10 +17,13 @@ shader_parameter/small_stars_near_size = 0.5
 shader_parameter/large_stars = 8.0
 shader_parameter/large_stars_far_size = 0.2
 shader_parameter/large_stars_near_size = 0.3
-shader_parameter/far_stars_color = Color(0.5, 0, 1, 1)
+shader_parameter/far_stars_color = Color(0.733333, 0.227451, 0.827451, 1)
 shader_parameter/near_stars_color = Color(1, 1, 1, 1)
 shader_parameter/base_scroll_speed = 0.01
 shader_parameter/additional_scroll_speed = 0.01
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_obtv4"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -35,6 +39,12 @@ script = ExtResource("1_1jjd6")
 stream = ExtResource("3_xq2ug")
 autoplay = true
 
+[node name="Background" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_xq2ug")
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.101961, 0.0627451, 0.266667, 1)
+
 [node name="Menu" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -43,42 +53,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Background2" type="ColorRect" parent="Menu"]
-material = SubResource("ShaderMaterial_xq2ug")
-layout_mode = 0
-offset_right = 640.0
-offset_bottom = 360.0
-color = Color(0.0795004, 0.126686, 0.202238, 1)
-
-[node name="Label" type="Label" parent="Menu"]
+[node name="Title" type="TextureRect" parent="Menu"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -150.0
-offset_top = 44.0
-offset_right = 150.0
-offset_bottom = 91.0
+offset_left = -233.0
+offset_right = 727.0
+offset_bottom = 400.0
 grow_horizontal = 2
-theme_override_font_sizes/font_size = 50
-text = "couchsurfing "
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Label2" type="Label" parent="Menu"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -143.0
-offset_top = 75.0
-offset_right = 138.0
-offset_bottom = 117.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 40
-text = "to the Galaxy "
-horizontal_alignment = 1
-vertical_alignment = 1
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_obtv4")
 
 [node name="MarginContainer" type="MarginContainer" parent="Menu"]
 layout_mode = 1
@@ -139,6 +125,7 @@ theme_override_constants/margin_bottom = 50
 
 [node name="PanelContainer" type="PanelContainer" parent="Option/MarginContainer"]
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_obtv4")
 
 [node name="MarginContainer" type="MarginContainer" parent="Option/MarginContainer/PanelContainer"]
 layout_mode = 2
