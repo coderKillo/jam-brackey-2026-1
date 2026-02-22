@@ -187,6 +187,7 @@ func free_random_slot() -> bool:
 	var freed_slot = slots_with_abilites.pick_random()
 	Events.ability_lost.emit(_slots[freed_slot].ability)
 	_slots[freed_slot] = Slot.new()
+	slots_changed.emit()
 	return true
 
 

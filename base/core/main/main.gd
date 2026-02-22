@@ -137,6 +137,7 @@ func _on_game_state_changed(new_state: Global.GameState):
 			for i in enemies.total_damage:
 				if not abilities.free_random_slot():
 					Events.level_lose.emit()
+					return
 
 			GameManager.set_state(Global.GameState.WAIT_FOR_COMBAT_INPUT)
 

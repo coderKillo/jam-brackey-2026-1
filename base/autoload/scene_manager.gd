@@ -33,7 +33,7 @@ func load_main_menu():
 
 
 func reload_level():
-	load_level(GameState.get_current_level())
+	load_game_scene()
 
 
 func advance_level():

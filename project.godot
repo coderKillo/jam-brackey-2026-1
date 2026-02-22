@@ -10,9 +10,8 @@ config_version=5
 
 [application]
 
-config/name="Jam-Template"
-config/description="s"
-config/version="0.0.1"
+config/name="Couchsurfing-through-the-Galaxy"
+config/version="0.1.0"
 run/main_scene="uid://cmmq3qk054d8m"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
