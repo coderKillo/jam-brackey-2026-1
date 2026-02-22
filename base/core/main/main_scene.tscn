@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=4 uid="uid://b6pacd4qux0r0"]
+[gd_scene load_steps=39 format=4 uid="uid://b6pacd4qux0r0"]
 
 [ext_resource type="Script" uid="uid://xwkwmj6gqkg7" path="res://base/core/main/main.gd" id="1_awp0h"]
 [ext_resource type="Theme" uid="uid://4r6b2cnujbph" path="res://assets/gui_assets/waste_no_space.theme" id="1_gjp0b"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://uhaoht8621ct" path="res://game/entities/enemy/enemy.tscn" id="5_ugwa6"]
 [ext_resource type="Script" uid="uid://cvtcqlgrh4n1c" path="res://game/systems/portal.gd" id="5_x0q8c"]
 [ext_resource type="Script" uid="uid://bm5px06x0e0pw" path="res://game/gui/gui.gd" id="6_3p8nd"]
+[ext_resource type="Image" uid="uid://dwqu8scb5o11t" path="res://assets/random-mask.png" id="6_5r02l"]
 [ext_resource type="Script" uid="uid://bcn0q4vy0p3px" path="res://game/manager/event_manager.gd" id="6_ugwa6"]
 [ext_resource type="Script" uid="uid://3cxfwyl4buid" path="res://game/systems/couch_model.gd" id="6_w3pcb"]
 [ext_resource type="Texture2D" uid="uid://iobs2ej4cnf0" path="res://assets/tilemap/couch.png" id="7_cyqf4"]
@@ -131,6 +132,7 @@ tile_set = SubResource("TileSet_ma400")
 script = ExtResource("3_6lyvc")
 unit_atlas_coords = Vector2i(0, 1)
 obstical_atlas_coords = Vector2i(0, 2)
+obstical_random_image = ExtResource("6_5r02l")
 
 [node name="Player" parent="World/Grid" instance=ExtResource("5_es3kw")]
 unique_name_in_owner = true

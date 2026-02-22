@@ -43,7 +43,7 @@ func _on_game_state_changed(new_state: Global.GameState):
 			await tween.finished
 			GameManager.set_state(Global.GameState.GENERATE_LEVEL)
 			enemies.enemy_count = ceili(current_stage / 5.0)
-			abilities.update_slot_count(ceili(current_stage / 4.0) + 3)
+			abilities.update_slot_count(floori(current_stage / 4.0) + 3)
 			current_stage += 1
 			%StageLabel.text = "stage %s" % current_stage
 
@@ -213,8 +213,14 @@ func handle_abilities():
 			enemies.take_damage(target_grid.selector_position)
 			grid.set_cell(target_grid.selector_position, 0, grid.ground_atlas_coords)
 
+		AbilityManager.Ability.PLAYER:
+			var cell = player_coord + direction
+			await VfxManager.spawn_effect(
+				VfxManager.Effect.SLASH, grid.to_global(grid.map_to_local(cell))
+			)
+			enemies.take_damage(cell)
+
 		AbilityManager.Ability.LASER:
-			print(direction)
 			await player.play_laser(direction, ability.range)
 			for cell in grid.raycast(player_coord, direction, ability.range):
 				enemies.take_damage(cell)

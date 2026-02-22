@@ -125,12 +125,12 @@ var _db := {
 	Ability.PLAYER:
 	{
 		ability = Ability.PLAYER,
-		shape = TargetGrid.Shapes.NONE,
+		shape = TargetGrid.Shapes.CROSS,
 		texture = preload("res://assets/characters/player.png"),
-		range = 0,
+		range = 1,
 		cooldown = 0,
 		name = "The Adventurer",
-		description = "Just you"
+		description = "You are so average, you could talk them to death."
 	},
 }
 
