@@ -64,6 +64,13 @@ func move_enemies():
 		var enemy_pos := _grid.local_to_map(enemy.position)
 		var move_direction := Vector2i.ZERO
 
+		if enemy.stun > 0:
+			enemy.stun -= 1
+			enemy.modulate = Color.BLUE
+			continue
+
+		enemy.modulate = Color.WHITE
+
 		for direction in MOVEMENT_DIRECTIONS:
 			if direction == enemy.last_movement:
 				continue

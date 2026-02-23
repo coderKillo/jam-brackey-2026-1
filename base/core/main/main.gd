@@ -135,9 +135,13 @@ func _on_game_state_changed(new_state: Global.GameState):
 
 		Global.GameState.HANDLE_DAMAGE:
 			for i in enemies.total_damage:
+				if player.shield_value > 0:
+					player.shield_value -= 1
+					continue
 				if not abilities.free_random_slot():
 					Events.level_lose.emit()
 					return
+			enemies.total_damage = 0
 
 			GameManager.set_state(Global.GameState.WAIT_FOR_COMBAT_INPUT)
 
@@ -227,24 +231,34 @@ func handle_abilities():
 
 		AbilityManager.Ability.DASH:
 			var result = grid.raycast(player_coord, direction, ability.range)
+			for cell in result:
+				enemies.take_damage(cell)
 			if not result.is_empty():
 				grid.move_to(player, result.back())
 				await grid.entity_moved
-			for cell in result:
-				enemies.take_damage(cell)
 
 		AbilityManager.Ability.HOOK:
 			var end_position = player_coord + direction
 			for cell in grid.raycast(player_coord, direction, ability.range):
 				if grid.is_unit(cell):
 					await player.play_hook(direction, abs(player_coord.x - cell.x))
-					grid.move_to(_get_unit(cell), end_position)
+					var unit = _get_unit(cell)
+					grid.move_to(unit, end_position)
 					await grid.entity_moved
+					if unit is Enemy:
+						unit.stun += 2
 					break
 
 		AbilityManager.Ability.BLINK:
 			await VfxManager.spawn_effect(VfxManager.Effect.SPAWN, player.global_position, 3)
 			player.hide()
+			if grid.is_unit(target_grid.selector_position):
+				var unit = _get_unit(target_grid.selector_position)
+				if is_instance_valid(unit):
+					grid.move(unit, direction)
+					await grid.entity_moved
+					if unit is Enemy:
+						unit.stun += 1
 			grid.move_to(player, target_grid.selector_position)
 			await grid.entity_moved
 			await VfxManager.spawn_effect(VfxManager.Effect.SPAWN, player.global_position, 3)
@@ -259,6 +273,7 @@ func handle_abilities():
 				if result.is_empty():
 					continue
 				grid.move_to(enemy, result.back())
+				enemy.stun += 2
 				await grid.entity_moved
 
 			for push_direction in TargetGrid.DIRECTIONS_DIAGONAL:
@@ -269,10 +284,11 @@ func handle_abilities():
 				if result.is_empty():
 					continue
 				grid.move_to(enemy, result.back())
+				enemy.stun += 2
 				await grid.entity_moved
 
 		AbilityManager.Ability.SHIELD:
-			player.shield_value += ability.range
+			player.shield_value = ability.range
 
 		AbilityManager.Ability.CREATE:
 			if grid.is_unit(target_grid.selector_position):
@@ -280,6 +296,8 @@ func handle_abilities():
 				if is_instance_valid(unit):
 					grid.move(unit, direction)
 					await grid.entity_moved
+					if unit is Enemy:
+						unit.stun += 1
 
 			grid.set_cell(target_grid.selector_position, 0, grid.obstical_atlas_coords)
 

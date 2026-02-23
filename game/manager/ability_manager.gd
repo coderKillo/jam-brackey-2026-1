@@ -80,7 +80,7 @@ var _db := {
 		cooldown = 2,
 		name = "The Smuggler",
 		description =
-		"Years in the business taugth him how get what he wants, can pull enemies to you"
+		"Years in the business taugth him how get what he wants, can pull enemies, portal or boxes to you. Stun enemies."
 	},
 	Ability.BLINK:
 	{
@@ -100,7 +100,8 @@ var _db := {
 		range = 2,
 		cooldown = 3,
 		name = "The Psyker",
-		description = "Born with a mind that can control energy, can push enemies away"
+		description =
+		"Born with a mind that can control energy, can push enemies away and stun them"
 	},
 	Ability.SHIELD:
 	{
@@ -144,6 +145,9 @@ func setup():
 		_slots.append(Slot.new())
 
 	_set_ability(Ability.PLAYER, floori(slot_count / 2.0))
+
+	_set_ability(Ability.HOOK, 0)
+	_set_ability(Ability.BLINK, 2)
 
 	Events.slot_count_changed.emit(slot_count)
 	reset()

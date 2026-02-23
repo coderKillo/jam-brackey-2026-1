@@ -41,6 +41,7 @@ autoplay = true
 
 [node name="Background" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_xq2ug")
+layout_mode = 0
 offset_right = 640.0
 offset_bottom = 360.0
 color = Color(0.101961, 0.0627451, 0.266667, 1)
