@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cmmq3qk054d8m"]
+[gd_scene load_steps=11 format=3 uid="uid://cmmq3qk054d8m"]
 
 [ext_resource type="Script" uid="uid://dcr3vuytcemx4" path="res://base/menu/main_menu/main_menu.gd" id="1_1jjd6"]
 [ext_resource type="Theme" uid="uid://4r6b2cnujbph" path="res://assets/gui_assets/waste_no_space.theme" id="1_lue4o"]
@@ -7,6 +7,7 @@
 [ext_resource type="Shader" uid="uid://nyoncwxnj76w" path="res://game/shader/start.gdshader" id="3_rk3xn"]
 [ext_resource type="AudioStream" uid="uid://b7j1vy1eaii15" path="res://assets/music/01 Falling Organ.mp3" id="3_xq2ug"]
 [ext_resource type="Texture2D" uid="uid://33utot2hfqfc" path="res://assets/itch/banner.png" id="5_obtv4"]
+[ext_resource type="PackedScene" uid="uid://cub5ixau0orgh" path="res://base/menu/common/animated_button.tscn" id="6_ocgfb"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xq2ug"]
 shader = ExtResource("3_rk3xn")
@@ -87,17 +88,17 @@ custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="NewGame" type="Button" parent="Menu/MarginContainer/VBoxContainer"]
+[node name="NewGame" parent="Menu/MarginContainer/VBoxContainer" instance=ExtResource("6_ocgfb")]
 unique_name_in_owner = true
 layout_mode = 2
 text = "New Game"
 
-[node name="Options" type="Button" parent="Menu/MarginContainer/VBoxContainer"]
+[node name="Options" parent="Menu/MarginContainer/VBoxContainer" instance=ExtResource("6_ocgfb")]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Options"
 
-[node name="Quit" type="Button" parent="Menu/MarginContainer/VBoxContainer"]
+[node name="Quit" parent="Menu/MarginContainer/VBoxContainer" instance=ExtResource("6_ocgfb")]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Quit"
@@ -267,17 +268,20 @@ theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
 columns = 5
 
-[node name="Back" type="Button" parent="."]
+[node name="Back" parent="." instance=ExtResource("6_ocgfb")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 1
 anchors_preset = 2
+anchor_left = 0.0
 anchor_top = 1.0
+anchor_right = 0.0
 anchor_bottom = 1.0
 offset_left = 10.0
 offset_top = -40.0
 offset_right = 70.0
 offset_bottom = -9.0
+grow_horizontal = 1
 grow_vertical = 0
 size_flags_horizontal = 0
 text = "back"

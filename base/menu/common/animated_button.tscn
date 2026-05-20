@@ -1,0 +1,50 @@
+[gd_scene load_steps=3 format=3 uid="uid://cub5ixau0orgh"]
+
+[ext_resource type="Theme" uid="uid://4r6b2cnujbph" path="res://assets/gui_assets/waste_no_space.theme" id="1_h2tl6"]
+[ext_resource type="Script" uid="uid://dynjxvkq5jukt" path="res://base/menu/common/animated_button.gd" id="1_nwgvu"]
+
+[node name="AnimatedButton" type="Button"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -180.0
+offset_right = -300.0
+offset_bottom = -161.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_h2tl6")
+text = "aa"
+script = ExtResource("1_nwgvu")
+
+[node name="Content" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(50.77, 0)
+mouse_filter = 2
+
+[node name="Button" type="Button" parent="Content"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+text = "<>"
+
+[node name="Click" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
+
+[node name="Hover" type="AudioStreamPlayer" parent="."]
+volume_db = 3.0
+pitch_scale = 1.2
+bus = &"SFX"

@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://h0mgu43ccb2v"]
+
+[ext_resource type="Shader" uid="uid://dxjcy2lwnv1cx" path="res://game/shader/diamond_transition.gdshader" id="1_4h4et"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jicio"]
+shader = ExtResource("1_4h4et")
+shader_parameter/AspectRatio = 1.5
+shader_parameter/Diamonds = 10.0
+shader_parameter/pixel_size = 0.08
+shader_parameter/height = -1.0
+shader_parameter/disable_pixel = true
+
+[sub_resource type="Gradient" id="Gradient_5soiv"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_i4lep"]
+gradient = SubResource("Gradient_5soiv")
+
+[node name="SceneChanger" type="CanvasLayer"]
+process_mode = 3
+layer = 99
+
+[node name="Transition" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.466667)
+self_modulate = Color(1, 1, 1, 0.929412)
+material = SubResource("ShaderMaterial_jicio")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture1D_i4lep")

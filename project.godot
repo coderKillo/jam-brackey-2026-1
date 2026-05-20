@@ -24,6 +24,7 @@ AppConfig="*res://base/autoload/app_config.gd"
 Screenshot="*res://base/autoload/screenshot.gd"
 GameManager="*res://game/autoload/game_manager.gd"
 VfxManager="*res://game/autoload/vfx_manager.gd"
+AnimationController="*res://base/autoload/animation_controller.gd"
 
 [display]
 
