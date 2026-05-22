@@ -1,13 +1,15 @@
-[gd_scene load_steps=39 format=4 uid="uid://b6pacd4qux0r0"]
+[gd_scene load_steps=41 format=4 uid="uid://b6pacd4qux0r0"]
 
 [ext_resource type="Script" uid="uid://xwkwmj6gqkg7" path="res://base/core/main/main.gd" id="1_awp0h"]
 [ext_resource type="Theme" uid="uid://4r6b2cnujbph" path="res://assets/gui_assets/waste_no_space.theme" id="1_gjp0b"]
 [ext_resource type="Texture2D" uid="uid://bxbihdwj6trs3" path="res://assets/tilemap/tilemap.png" id="2_qe2dj"]
 [ext_resource type="Script" uid="uid://kjati1nod51" path="res://game/systems/grid.gd" id="3_6lyvc"]
 [ext_resource type="Shader" uid="uid://nyoncwxnj76w" path="res://game/shader/start.gdshader" id="3_b46tn"]
+[ext_resource type="Script" uid="uid://coibpkkpltmu4" path="res://game/levels/level_generator.gd" id="3_cgvbc"]
 [ext_resource type="Script" uid="uid://ccjub2guv1dti" path="res://game/manager/ability_manager.gd" id="4_ociif"]
 [ext_resource type="Script" uid="uid://jt2r2iwsu0qi" path="res://game/manager/enemy_manager.gd" id="5_6icyu"]
 [ext_resource type="PackedScene" uid="uid://deg3gb8lq72x2" path="res://game/entities/player/player.tscn" id="5_es3kw"]
+[ext_resource type="Script" uid="uid://wp820j02ihd1" path="res://game/levels/background.gd" id="5_kyaiq"]
 [ext_resource type="PackedScene" uid="uid://uhaoht8621ct" path="res://game/entities/enemy/enemy.tscn" id="5_ugwa6"]
 [ext_resource type="Script" uid="uid://cvtcqlgrh4n1c" path="res://game/systems/portal.gd" id="5_x0q8c"]
 [ext_resource type="Script" uid="uid://bm5px06x0e0pw" path="res://game/gui/gui.gd" id="6_3p8nd"]
@@ -114,12 +116,16 @@ script = ExtResource("1_awp0h")
 level_container = NodePath("World")
 gui = NodePath("CanvasLayer/Gui")
 
+[node name="LevelGenerator" type="Node2D" parent="."]
+script = ExtResource("3_cgvbc")
+
 [node name="Background" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_l3rmk")
 layout_mode = 0
 offset_right = 640.0
 offset_bottom = 360.0
 color = Color(0.101961, 0.0627451, 0.266667, 1)
+script = ExtResource("5_kyaiq")
 
 [node name="World" type="Node2D" parent="."]
 position = Vector2(320, 180)
@@ -188,7 +194,7 @@ script = ExtResource("14_c8pys")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 2
 
-[node name="Gui" type="Control" parent="CanvasLayer"]
+[node name="Gui" type="Control" parent="CanvasLayer" node_paths=PackedStringArray("main")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -199,6 +205,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("6_3p8nd")
+main = NodePath("../..")
 
 [node name="StageLabel" type="Label" parent="CanvasLayer/Gui"]
 unique_name_in_owner = true
@@ -408,7 +415,7 @@ script = ExtResource("4_ociif")
 [node name="EnemyManager" type="Node2D" parent="Managers"]
 unique_name_in_owner = true
 script = ExtResource("5_6icyu")
-enemy_count = 1
+enemy_count = 3
 enemy_scene = ExtResource("5_ugwa6")
 
 [node name="EventManager" type="Node2D" parent="Managers"]

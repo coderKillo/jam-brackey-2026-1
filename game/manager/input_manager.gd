@@ -99,13 +99,9 @@ func _process(_delta):
 
 func _on_game_state_changed(state: Global.GameState):
 	match state:
-		Global.GameState.WAIT_FOR_COMBAT_INPUT:
+		Global.GameState.PLAYER_TURN:
 			reset()
 			current_mode = Mode.MOVEMENT
-			_active = true
-		Global.GameState.WAIT_FOR_EVENT_INPUT:
-			reset()
-			current_mode = Mode.EVENT
 			_active = true
 		_:
 			_active = false

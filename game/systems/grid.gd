@@ -1,7 +1,10 @@
 class_name Grid
 extends TileMapLayer
 
+const SPAWN_FEEDBACK_FRAME = 3
+
 signal entity_moved
+signal entity_spawned
 signal level_generated
 
 @export var ground_atlas_coords: Vector2i
@@ -9,26 +12,23 @@ signal level_generated
 @export var obstical_atlas_coords: Vector2i
 @export var obstical_random_image: Image
 
+@onready var player: Player = %Player
+@onready var portal: Portal = %Portal
+@onready var stranger: Stranger = %Stranger
+
 var gird_size := Vector2i.ZERO
 
 
-func generate_level(size: Vector2i, _obsticals_count: int):
+func generate_level(size: Vector2i):
 	gird_size = size
 	reset()
-	var half_size = size / 2
-	for x in range(-half_size.x, half_size.x):
-		for y in range(-half_size.y, half_size.y):
+	var offset = size / 2
+	var top_left = -offset
+	var bottom_right = size - offset
+
+	for x in range(top_left.x, bottom_right.x):
+		for y in range(top_left.y, bottom_right.y):
 			set_cell(Vector2i(x, y), 0, ground_atlas_coords)
-
-	var offset_x = (randi() % (obstical_random_image.get_width() - size.x)) + half_size.x
-	var offset_y = (randi() % (obstical_random_image.get_height() - size.y)) + half_size.y
-
-	for cell in get_used_cells():
-		var color := obstical_random_image.get_pixel(cell.x + offset_x, cell.y + offset_y)
-		if color == Color.WHITE:
-			var random = randi() % 4
-			var atlas_coords = Vector2i(random, obstical_atlas_coords.y)
-			set_cell(cell, 0, atlas_coords)
 
 	await get_tree().create_timer(0.2).timeout
 	level_generated.emit()
@@ -51,6 +51,16 @@ func add(
 	if block_cell:
 		set_cell(start_position, 0, unit_atlas_coords)
 	return true
+
+
+func spawn(entity: Node2D, start_position: Vector2i):
+	add(entity, start_position)
+	entity.hide()
+	await VfxManager.spawn_effect(
+		VfxManager.Effect.SPAWN, entity.global_position, SPAWN_FEEDBACK_FRAME
+	)
+	entity.show()
+	entity_spawned.emit()
 
 
 func move(entity: Node2D, direction: Vector2i) -> bool:

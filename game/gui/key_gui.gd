@@ -31,7 +31,7 @@ func _on_input_received():
 
 
 func _on_game_state_changed(state: Global.GameState):
-	if state != Global.GameState.WAIT_FOR_COMBAT_INPUT:
+	if state != Global.GameState.PLAYER_TURN:
 		movement.hide()
 		select_ability.hide()
 		select_target.hide()

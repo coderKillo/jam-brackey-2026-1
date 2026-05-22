@@ -1,11 +1,11 @@
 extends Node
 
-const INIT_STATE = Global.GameState.TRANSITION_ANIMATION
+const INIT_STATE = Global.GameState.GENERATE_LEVEL
 
 signal state_changed(new_state: Global.GameState)
 
-var current_state := Global.GameState.INIT
-var _next_state := Global.GameState.INIT
+var current_state := Global.GameState.SETUP
+var _next_state := Global.GameState.SETUP
 
 
 func init():

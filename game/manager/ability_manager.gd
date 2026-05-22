@@ -146,9 +146,6 @@ func setup():
 
 	_set_ability(Ability.PLAYER, floori(slot_count / 2.0))
 
-	_set_ability(Ability.HOOK, 0)
-	_set_ability(Ability.BLINK, 2)
-
 	Events.slot_count_changed.emit(slot_count)
 	reset()
 

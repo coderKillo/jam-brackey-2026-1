@@ -16,7 +16,7 @@ func _ready():
 
 
 func _on_input_received():
-	if GameManager.current_state != Global.GameState.WAIT_FOR_COMBAT_INPUT:
+	if GameManager.current_state != Global.GameState.PLAYER_TURN:
 		hide()
 		return
 
@@ -39,5 +39,5 @@ func _on_input_received():
 
 
 func _on_game_state_changed(state: Global.GameState):
-	if state != Global.GameState.WAIT_FOR_COMBAT_INPUT:
+	if state != Global.GameState.PLAYER_TURN:
 		hide()

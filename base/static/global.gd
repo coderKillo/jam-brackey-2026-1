@@ -2,18 +2,18 @@ class_name Global
 extends Node
 
 enum GameState {
-	INIT,
-	TRANSITION_ANIMATION,
+	SETUP,
+	# start level loop
 	GENERATE_LEVEL,
-	SPAWN_ENTITIES,
-	WAIT_FOR_COMBAT_INPUT,
-	MOVE_PLAYER,
-	USE_ABILITY,
-	PLAY_EVENT,
-	WAIT_FOR_EVENT_INPUT,
+	# start turn loop
+	ENEMY_DECIDES,
+	PLAYER_TURN,
 	ENEMY_TURN,
-	HANDLE_DAMAGE,
+	# end turn loop
 	PORTAL_REACHED,
+	ALL_ENEMIES_DIED,
+	# end level loop
+	PLAYER_DIED,
 }
 
 const CELL_SIZE = 32

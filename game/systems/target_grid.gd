@@ -29,7 +29,7 @@ func _ready():
 
 
 func _on_game_state_changed(new_state: Global.GameState):
-	if new_state != Global.GameState.WAIT_FOR_COMBAT_INPUT:
+	if new_state != Global.GameState.PLAYER_TURN:
 		reset()
 
 

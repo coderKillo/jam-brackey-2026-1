@@ -1,7 +1,7 @@
 class_name Player
 extends Sprite2D
 
-signal spawned
+signal turn_finished
 
 var shield_value := 0
 var start_position := Vector2i.ZERO
@@ -10,47 +10,29 @@ var start_position := Vector2i.ZERO
 @onready var projectile: Node2D = $Projectile
 
 var _grid: Grid
+var _input: InputManager
 
 
-func _process(_delta):
-	shield.modulate.a = shield_value / 5.0
-
-
-func setup(grid: Grid):
+func setup(grid: Grid, input: InputManager):
 	_grid = grid
+	_input = input
 
 
 func spawn():
 	reset()
-	_grid.add(self, start_position)
-	hide()
-	await VfxManager.spawn_effect(VfxManager.Effect.SPAWN, global_position, 3)
-	show()
-	spawned.emit()
 
 
-func play_hook(direction: Vector2i, distance: int):
-	projectile.show()
-	projectile.modulate = Color.BROWN
-	projectile.look_at(global_position + Vector2(direction.x, direction.y))
-	var tween = get_tree().create_tween()
-	tween.tween_property(projectile, "scale:x", distance * Global.CELL_SIZE / 2.0, 0.2)
-	tween.tween_property(projectile, "scale:x", 1.0, 0.1)
-	await tween.finished
-	projectile.hide()
+func turn():
+	# TODO: implement player turn logic
 
-
-func play_laser(direction: Vector2i, distance: int):
-	projectile.show()
-	projectile.modulate = Color.WHITE
-	projectile.look_at(global_position + Vector2(direction.x, direction.y))
-	var tween = get_tree().create_tween()
-	tween.tween_property(projectile, "scale:x", distance * Global.CELL_SIZE / 2.0, 0.2)
-	tween.tween_property(projectile, "scale:y", 8.0, 0.2)
-	tween.tween_interval(0.2)
-	tween.tween_property(projectile, "scale:y", 1.0, 0.1)
-	await tween.finished
-	projectile.hide()
+	while true:
+		await _input.input_received
+		var moved = await _grid.move(self, _input.direction)
+		print(moved)
+		if moved:
+			break
+	await get_tree().create_timer(0.2).timeout
+	turn_finished.emit()
 
 
 func reset():

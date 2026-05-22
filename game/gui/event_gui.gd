@@ -15,7 +15,7 @@ func _ready():
 
 
 func _on_game_state_changed(state: Global.GameState):
-	if state != Global.GameState.WAIT_FOR_EVENT_INPUT:
+	if state != Global.GameState.PLAYER_TURN:
 		hide()
 		return
 	if not ability_manager._db.has(event_manager.event_ability):
