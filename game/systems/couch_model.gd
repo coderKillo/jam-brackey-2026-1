@@ -1,6 +1,8 @@
 class_name CouchModel
 extends Node2D
 
+signal slot_selected(index: int)
+
 const SLOT_SIZE = 16
 const BORDER_SIZE = 4
 const SELECTION_VALID = 0
@@ -40,6 +42,9 @@ func setup(slots: int):
 
 	for i in slots:
 		var slot = slot_model_scene.instantiate()
+		slot.get_node("Area2D").input_event.connect(_on_slot_input_event.bind(i))
+		slot.get_node("Area2D").mouse_entered.connect(_on_slot_mouse_entered.bind(i))
+		slot.get_node("Area2D").mouse_exited.connect(_on_slot_mouse_exited.bind(i))
 		slot.position.x = pointer
 		add_child(slot)
 		_slots.append(slot)
@@ -124,3 +129,21 @@ func _add_sprite(texture: Texture, x_position: float) -> void:
 	sprite.texture = texture
 	sprite.position.x = x_position
 	add_child(sprite)
+
+
+func _on_slot_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int, slot_idx: int):
+	event = event as InputEventMouseButton
+	if not event:
+		return
+	if event.button_index != MOUSE_BUTTON_LEFT:
+		return
+
+	slot_selected.emit(slot_idx)
+
+
+func _on_slot_mouse_entered(slot_idx: int):
+	select(slot_idx, true)
+
+
+func _on_slot_mouse_exited(_slot_idx: int):
+	reset()

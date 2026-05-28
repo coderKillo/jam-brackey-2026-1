@@ -25,7 +25,7 @@ func _ready():
 	events.setup()
 	enemies.setup(grid, player)
 	input.setup()
-	player.setup(grid, input)
+	player.setup(grid, target_grid, input)
 	target_grid.setup(grid)
 	level_generator.setup(background, enemies, grid, level_container)
 

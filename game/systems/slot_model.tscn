@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://b0pvs5nahwkt2"]
+[gd_scene load_steps=4 format=3 uid="uid://b0pvs5nahwkt2"]
 
 [ext_resource type="Texture2D" uid="uid://iobs2ej4cnf0" path="res://assets/tilemap/couch.png" id="1_raj3v"]
 [ext_resource type="Texture2D" uid="uid://c3ns506cygwl2" path="res://assets/characters/character_placeholder.png" id="2_32a4j"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_32a4j"]
+size = Vector2(18, 28)
 
 [node name="Slot" type="Sprite2D"]
 texture = ExtResource("1_raj3v")
@@ -25,3 +28,9 @@ theme_override_font_sizes/font_size = 20
 text = "2"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, 3)
+shape = SubResource("RectangleShape2D_32a4j")

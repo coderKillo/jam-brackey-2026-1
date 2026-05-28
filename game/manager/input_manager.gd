@@ -1,43 +1,32 @@
 class_name InputManager
 extends Node
 
-enum Mode {
-	MOVEMENT,
-	SELECT_ABILITY,
-	SELECT_CELL,
-	CAST_ABILITY,
-	EVENT,
-	ACCEPT,
-	REJECT,
+enum InputType {
+	NONE,
+	DIRECTION,
+	CELL,
+	SLOT,
 }
+
+@export var target_grid: TargetGrid
+@export var couch_model: CouchModel
 
 signal input_received
 
-var ability_selected := 0:
-	set(value):
-		if value != ability_selected:
-			ability_selected = value
-			input_received.emit()
+var cell_position: Vector2i
+var slot_index: int
+var direction: Vector2i
+var input_type: InputType
 
-var direction := Vector2i.ZERO:
-	set(value):
-		direction = value
-		input_received.emit()
-
-var current_mode := Mode.MOVEMENT:
-	set(value):
-		if value != current_mode:
-			direction = Vector2i.ZERO
-			current_mode = value
-			input_received.emit()
-
-var _slot_count: int = 0
 var _active: bool = false
 
 
 func _ready():
-	Events.slot_count_changed.connect(func(count: int): _slot_count = count)
-	GameManager.state_changed.connect(_on_game_state_changed)
+	assert(target_grid)
+	assert(couch_model)
+
+	target_grid.cell_selected.connect(_on_cell_selected)
+	couch_model.slot_selected.connect(_on_slot_selected)
 
 
 func setup() -> void:
@@ -45,74 +34,71 @@ func setup() -> void:
 
 
 func reset():
-	current_mode = Mode.MOVEMENT
 	direction = Vector2i.ZERO
+	cell_position = Vector2i.ZERO
+	slot_index = -1
+	input_type = InputType.NONE
+
+
+func active(value: bool):
+	if value:
+		reset()
+	_active = value
+
+
+func is_cell_selected() -> bool:
+	return input_type == InputType.CELL
+
+
+func get_cell_position() -> Vector2i:
+	return cell_position
+
+
+func is_slot_selected() -> bool:
+	return input_type == InputType.SLOT
+
+
+func get_slot() -> int:
+	return slot_index
+
+
+func is_direction_pressed() -> bool:
+	return input_type == InputType.DIRECTION
+
+
+func get_direction() -> Vector2i:
+	return direction
 
 
 func _process(_delta):
 	if not _active:
 		return
 
-	match current_mode:
-		Mode.MOVEMENT:
-			if Input.is_action_just_pressed("move_right"):
-				direction = Vector2i.RIGHT
-			elif Input.is_action_just_pressed("move_left"):
-				direction = Vector2i.LEFT
-			elif Input.is_action_just_pressed("move_up"):
-				direction = Vector2i.UP
-			elif Input.is_action_just_pressed("move_down"):
-				direction = Vector2i.DOWN
-			elif Input.is_action_just_pressed("action"):
-				current_mode = Mode.SELECT_ABILITY
+	direction = Vector2i.ZERO
+	if Input.is_action_pressed("move_up"):
+		direction = Vector2i.UP
+	if Input.is_action_pressed("move_down"):
+		direction = Vector2i.DOWN
+	if Input.is_action_pressed("move_left"):
+		direction = Vector2i.LEFT
+	if Input.is_action_pressed("move_right"):
+		direction = Vector2i.RIGHT
 
-		Mode.SELECT_ABILITY:
-			if Input.is_action_just_pressed("move_right"):
-				ability_selected = (ability_selected + 1) % _slot_count
-			elif Input.is_action_just_pressed("move_left"):
-				ability_selected = (ability_selected - 1 + _slot_count) % _slot_count
-			elif Input.is_action_just_pressed("action"):
-				current_mode = Mode.SELECT_CELL
-			elif Input.is_action_just_pressed("cancel"):
-				cancel()
-
-		Mode.SELECT_CELL:
-			if Input.is_action_just_pressed("move_right"):
-				direction = Vector2i.RIGHT
-			elif Input.is_action_just_pressed("move_left"):
-				direction = Vector2i.LEFT
-			elif Input.is_action_just_pressed("move_up"):
-				direction = Vector2i.UP
-			elif Input.is_action_just_pressed("move_down"):
-				direction = Vector2i.DOWN
-			elif Input.is_action_just_pressed("action"):
-				current_mode = Mode.CAST_ABILITY
-			elif Input.is_action_just_pressed("cancel"):
-				cancel()
-
-		Mode.EVENT:
-			if Input.is_action_just_pressed("action"):
-				current_mode = Mode.ACCEPT
-			elif Input.is_action_just_pressed("cancel"):
-				current_mode = Mode.REJECT
+	if direction != Vector2i.ZERO:
+		_input_received(InputType.DIRECTION)
 
 
-func _on_game_state_changed(state: Global.GameState):
-	match state:
-		Global.GameState.PLAYER_TURN:
-			reset()
-			current_mode = Mode.MOVEMENT
-			_active = true
-		_:
-			_active = false
+func _on_cell_selected(cell: Vector2i):
+	cell_position = cell
+	_input_received(InputType.CELL)
 
 
-func cancel():
-	if not _active:
-		return
-	match current_mode:
-		Mode.SELECT_ABILITY:
-			current_mode = Mode.MOVEMENT
+func _on_slot_selected(slot: int):
+	slot_index = slot
+	_input_received(InputType.SLOT)
 
-		Mode.SELECT_CELL:
-			current_mode = Mode.SELECT_ABILITY
+
+func _input_received(type: InputType):
+	_active = false
+	input_type = type
+	input_received.emit()

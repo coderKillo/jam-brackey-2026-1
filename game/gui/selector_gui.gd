@@ -20,10 +20,6 @@ func _on_input_received():
 		hide()
 		return
 
-	if input_manager.current_mode == InputManager.Mode.MOVEMENT:
-		hide()
-		return
-
 	var slot = input_manager.ability_selected
 	if not ability_manager.is_slot_valid(slot):
 		hide()

@@ -21,14 +21,6 @@ func _on_input_received():
 	select_ability.hide()
 	select_target.hide()
 
-	match input_manager.current_mode:
-		InputManager.Mode.MOVEMENT:
-			movement.show()
-		InputManager.Mode.SELECT_ABILITY:
-			select_ability.show()
-		InputManager.Mode.SELECT_CELL:
-			select_target.show()
-
 
 func _on_game_state_changed(state: Global.GameState):
 	if state != Global.GameState.PLAYER_TURN:

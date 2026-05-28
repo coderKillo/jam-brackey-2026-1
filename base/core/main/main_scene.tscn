@@ -25,7 +25,6 @@
 [ext_resource type="Texture2D" uid="uid://cg3qoxxexdsu7" path="res://assets/selector.png" id="10_0h0lk"]
 [ext_resource type="FontFile" uid="uid://pntlljl77f2n" path="res://assets/gui_assets/fonts/Poco.ttf" id="11_es3kw"]
 [ext_resource type="Script" uid="uid://8kvpo5a7ghur" path="res://game/systems/camera_2d.gd" id="14_c8pys"]
-[ext_resource type="Script" uid="uid://dmrxwkfph6acd" path="res://game/gui/selector_gui.gd" id="15_b46tn"]
 [ext_resource type="Script" uid="uid://g8qpbdyyb824" path="res://game/gui/key_gui.gd" id="17_l3rmk"]
 [ext_resource type="Script" uid="uid://b2rsxpecj1lbh" path="res://game/gui/event_gui.gd" id="20_htuni"]
 [ext_resource type="Texture2D" uid="uid://c3ns506cygwl2" path="res://assets/characters/character_placeholder.png" id="21_57fuq"]
@@ -103,6 +102,9 @@ tile_size = Vector2i(32, 32)
 sources/0 = SubResource("TileSetAtlasSource_0h0lk")
 sources/1 = SubResource("TileSetAtlasSource_4jeu6")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cgvbc"]
+size = Vector2(385, 225)
+
 [node name="MainScene" type="Control" node_paths=PackedStringArray("level_container", "gui")]
 layout_mode = 3
 anchors_preset = 15
@@ -123,17 +125,17 @@ script = ExtResource("3_cgvbc")
 material = SubResource("ShaderMaterial_l3rmk")
 layout_mode = 0
 offset_right = 640.0
-offset_bottom = 360.0
+offset_bottom = 480.0
 color = Color(0.101961, 0.0627451, 0.266667, 1)
 script = ExtResource("5_kyaiq")
 
 [node name="World" type="Node2D" parent="."]
-position = Vector2(320, 180)
+position = Vector2(320, 240)
 
 [node name="Grid" type="TileMapLayer" parent="World"]
 unique_name_in_owner = true
 position = Vector2(0, -36)
-tile_map_data = PackedByteArray("AAD7//3/AAAAAAAAAAD7//7/AAAAAAAAAAD7////AAAAAAAAAAD7/wAAAAAAAAAAAAD7/wEAAAAAAAAAAAD7/wIAAAAAAAAAAAD8//3/AAAAAAAAAAD8//7/AAAAAAAAAAD8////AAAAAAAAAAD8/wAAAAAAAAAAAAD8/wEAAAAAAAAAAAD8/wIAAAAAAAAAAAD9//3/AAAAAAAAAAD9//7/AAAAAAAAAAD9////AAAAAAAAAAD9/wAAAAAAAAAAAAD9/wEAAAAAAAAAAAD9/wIAAAAAAAAAAAD+//3/AAAAAAAAAAD+//7/AAAAAAAAAAD+////AAAAAAAAAAD+/wAAAAAAAAAAAAD+/wEAAAAAAAAAAAD+/wIAAAAAAAAAAAD///3/AAAAAAAAAAD///7/AAAAAAAAAAD/////AAAAAAAAAAD//wAAAAAAAAAAAAD//wEAAAAAAAAAAAD//wIAAAAAAAAAAAAAAP3/AAAAAAAAAAAAAP7/AAAAAAAAAAAAAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAABAP3/AAAAAAAAAAABAP7/AAAAAAAAAAABAP//AAAAAAAAAAABAAAAAAAAAAAAAAABAAEAAAAAAAAAAAABAAIAAAAAAAAAAAACAP3/AAAAAAAAAAACAP7/AAAAAAAAAAACAP//AAAAAAAAAAACAAAAAAAAAAAAAAACAAEAAAAAAAAAAAACAAIAAAAAAAAAAAADAP3/AAAAAAAAAAADAP7/AAAAAAAAAAADAP//AAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAADAAIAAAAAAAAAAAAEAP3/AAAAAAAAAAAEAP7/AAAAAAAAAAAEAP//AAAAAAAAAAAEAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAAEAAIAAAAAAAAAAAA=")
+tile_map_data = PackedByteArray("AAD7//3/AAAAAAAAAAD7//7/AAAAAAAAAAD7////AAAAAAAAAAD7/wAAAAAAAAAAAAD7/wEAAAAAAAAAAAD7/wIAAAAAAAAAAAD8//3/AAAAAAAAAAD8//7/AAAAAAAAAAD8////AAAAAAAAAAD8/wAAAAAAAAAAAAD8/wEAAAAAAAAAAAD8/wIAAAAAAAAAAAD9//3/AAAAAAAAAAD9//7/AAAAAAAAAAD9////AAAAAAAAAAD9/wAAAAAAAAAAAAD9/wEAAAAAAAAAAAD9/wIAAAAAAAAAAAD+//3/AAAAAAAAAAD+//7/AAAAAAAAAAD+////AAAAAAAAAAD+/wAAAAAAAAAAAAD+/wEAAAAAAAAAAAD+/wIAAAAAAAAAAAD///3/AAAAAAAAAAD///7/AAAAAAAAAAD/////AAAAAAAAAAD//wAAAAAAAAAAAAD//wEAAAAAAAAAAAD//wIAAAAAAAAAAAAAAP3/AAAAAAAAAAAAAP7/AAAAAAAAAAAAAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAABAP3/AAAAAAAAAAABAP7/AAAAAAAAAAABAP//AAAAAAAAAAABAAAAAAAAAAAAAAABAAEAAAAAAAAAAAABAAIAAAAAAAAAAAACAP3/AAAAAAAAAAACAP7/AAAAAAAAAAACAP//AAAAAAAAAAACAAAAAAAAAAAAAAACAAEAAAAAAAAAAAACAAIAAAAAAAAAAAADAP3/AAAAAAAAAAADAP7/AAAAAAAAAAADAP//AAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAADAAIAAAAAAAAAAAAEAP3/AAAAAAAAAAAEAP7/AAAAAAAAAAAEAP//AAAAAAAAAAAEAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAAEAAIAAAAAAAAAAAD7/wMAAAAAAAAAAAD8/wMAAAAAAAAAAAD9/wMAAAAAAAAAAAD+/wMAAAAAAAAAAAD//wMAAAAAAAAAAAAAAAMAAAAAAAAAAAABAAMAAAAAAAAAAAACAAMAAAAAAAAAAAADAAMAAAAAAAAAAAAEAAMAAAAAAAAAAAAFAAMAAAAAAAAAAAAFAAIAAAAAAAAAAAAFAAEAAAAAAAAAAAAFAAAAAAAAAAAAAAAFAP//AAAAAAAAAAAFAP7/AAAAAAAAAAAFAP3/AAAAAAAAAAD6//3/AAAAAAAAAAD6//7/AAAAAAAAAAD6////AAAAAAAAAAD6/wAAAAAAAAAAAAD6/wEAAAAAAAAAAAD6/wIAAAAAAAAAAAD6/wMAAAAAAAAAAAA=")
 tile_set = SubResource("TileSet_ma400")
 script = ExtResource("3_6lyvc")
 unit_atlas_coords = Vector2i(0, 1)
@@ -161,7 +163,7 @@ region_rect = Rect2(160, 0, 32, 32)
 script = ExtResource("8_eb0yd")
 
 [node name="CouchModel" type="Node2D" parent="World" node_paths=PackedStringArray("ability_manager")]
-position = Vector2(0, 144)
+position = Vector2(0, 196)
 scale = Vector2(2, 2)
 script = ExtResource("6_w3pcb")
 ability_manager = NodePath("../../Managers/AbilityManager")
@@ -187,6 +189,12 @@ script = ExtResource("8_cyqf4")
 visible = false
 texture = ExtResource("10_0h0lk")
 hframes = 2
+
+[node name="MouseDetection" type="Area2D" parent="World/TargetGrid"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/TargetGrid/MouseDetection"]
+position = Vector2(-0.5, 15.5)
+shape = SubResource("RectangleShape2D_cgvbc")
 
 [node name="Camera2D" type="Camera2D" parent="World"]
 script = ExtResource("14_c8pys")
@@ -214,53 +222,15 @@ offset_left = 27.0
 offset_top = 14.0
 offset_right = 122.0
 offset_bottom = 43.0
-theme_override_font_sizes/font_size = 31
+theme_override_font_sizes/font_size = 20
 text = "stage 1"
-
-[node name="SelectorGui" type="PanelContainer" parent="CanvasLayer/Gui" node_paths=PackedStringArray("ability_manager", "input_manager")]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = 157.0
-offset_top = 18.0
-offset_right = 312.0
-offset_bottom = 88.0
-grow_horizontal = 2
-size_flags_horizontal = 4
-theme = ExtResource("1_gjp0b")
-script = ExtResource("15_b46tn")
-ability_manager = NodePath("../../../Managers/AbilityManager")
-input_manager = NodePath("../../../Managers/InputManager")
-
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Gui/SelectorGui"]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Gui/SelectorGui/MarginContainer"]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="CanvasLayer/Gui/SelectorGui/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "The Pilot"
-horizontal_alignment = 1
-
-[node name="Body" type="RichTextLabel" parent="CanvasLayer/Gui/SelectorGui/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_fonts/normal_font = ExtResource("11_es3kw")
-theme_override_font_sizes/normal_font_size = 10
-fit_content = true
 
 [node name="KeyGui" type="Control" parent="CanvasLayer/Gui" node_paths=PackedStringArray("ability_manager", "input_manager")]
 anchors_preset = 0
 offset_left = 305.0
-offset_top = 251.0
+offset_top = 340.0
 offset_right = 345.0
-offset_bottom = 291.0
+offset_bottom = 380.0
 script = ExtResource("17_l3rmk")
 ability_manager = NodePath("../../../Managers/AbilityManager")
 input_manager = NodePath("../../../Managers/InputManager")
@@ -422,9 +392,11 @@ enemy_scene = ExtResource("5_ugwa6")
 unique_name_in_owner = true
 script = ExtResource("6_ugwa6")
 
-[node name="InputManager" type="Node2D" parent="Managers"]
+[node name="InputManager" type="Node2D" parent="Managers" node_paths=PackedStringArray("target_grid", "couch_model")]
 unique_name_in_owner = true
 script = ExtResource("7_x0q8c")
+target_grid = NodePath("../../World/TargetGrid")
+couch_model = NodePath("../../World/CouchModel")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("27_hhr1e")

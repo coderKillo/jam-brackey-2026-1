@@ -1,6 +1,8 @@
 class_name TargetGrid
 extends TileMapLayer
 
+signal cell_selected(pos: Vector2i)
+
 const DIRECTIONS = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
 const DIRECTIONS_DIAGONAL = [Vector2i(1, 1), Vector2i(-1, 1), Vector2i(-1, -1), Vector2i(1, -1)]
 const SELECTION_VALID = 0
@@ -22,15 +24,13 @@ var _current_direction := Vector2i.ZERO
 
 func setup(grid: Grid):
 	_grid = grid
+	reset()
 
 
 func _ready():
-	GameManager.state_changed.connect(_on_game_state_changed)
-
-
-func _on_game_state_changed(new_state: Global.GameState):
-	if new_state != Global.GameState.PLAYER_TURN:
-		reset()
+	$MouseDetection.input_event.connect(_on_input_event)
+	$MouseDetection.mouse_entered.connect(_on_mouse_entered)
+	$MouseDetection.mouse_exited.connect(_on_mouse_exited)
 
 
 func _process(_delta):
@@ -99,64 +99,6 @@ func make_shape(shape: Shapes, coord: Vector2i, distance: int):
 	selector.hide()
 
 
-func move_selector(direction: Vector2i):
-	if direction == Vector2i.ZERO:
-		selector.show()
-
-	match _current_shape:
-		Shapes.RING:
-			_move_selector_on_grid(direction)
-
-		Shapes.RECT:
-			_move_selector_on_grid(direction)
-
-		Shapes.CROSS:
-			_move_selector_direction(direction)
-
-		Shapes.CROSS_DIAGONAL:
-			_move_selector_cross_direction(direction)
-
-		Shapes.NONE:
-			pass
-
-
-func _move_selector_on_grid(direction: Vector2i):
-	var new_pos = selector_position + direction
-	if not _grid.is_within_bounds(new_pos):
-		return
-	selector.show()
-	selector_position = new_pos
-	if is_target_tile(selector_position):
-		selector.frame = SELECTION_VALID
-	else:
-		selector.frame = SELECTION_INVALID
-
-
-func _move_selector_direction(direction: Vector2i):
-	if not _position_lookup.has(direction):
-		return
-	selector.frame = SELECTION_VALID
-	selector.show()
-	selector_position = _position_lookup[direction]
-	_current_direction = direction
-
-
-func _move_selector_cross_direction(direction: Vector2i):
-	var new_direction = _current_direction
-	if direction.x != 0:
-		new_direction.x = direction.x
-	if direction.y != 0:
-		new_direction.y = direction.y
-
-	if not _position_lookup.has(new_direction):
-		return
-
-	selector.frame = SELECTION_VALID
-	selector.show()
-	selector_position = _position_lookup[new_direction]
-	_current_direction = new_direction
-
-
 func add_target_tile(pos: Vector2i):
 	set_cell(pos, 0, Vector2i.ZERO)
 
@@ -166,5 +108,31 @@ func is_target_tile(pos: Vector2i):
 
 
 func reset():
-	selector.hide()
+	hide()
 	clear()
+
+
+func active():
+	show()
+
+
+func _on_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int):
+	if event is InputEventMouseMotion:
+		selector_position = local_to_map(to_local(event.position))
+		selector.show()
+		if is_target_tile(selector_position):
+			selector.frame = SELECTION_VALID
+		else:
+			selector.frame = SELECTION_INVALID
+
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			cell_selected.emit(selector_position)
+
+
+func _on_mouse_entered():
+	selector.show()
+
+
+func _on_mouse_exited():
+	selector.hide()

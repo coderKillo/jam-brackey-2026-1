@@ -4,7 +4,7 @@ extends Node2D
 
 signal level_generated
 
-const GRID_SIZE = Vector2i(10, 7)
+const GRID_SIZE = Vector2i(12, 7)
 
 var _background: Background
 var _enemy_manager: EnemyManager
@@ -28,13 +28,13 @@ func generate_level():
 	await _grid.level_generated
 
 	#spawn units
-	_grid.spawn(_grid.portal, Vector2i(3, 0))
+	_grid.spawn(_grid.portal, Vector2i(4, 0))
 	await _grid.entity_spawned
 
 	_grid.spawn(_grid.stranger, Vector2i(0, 0))
 	await _grid.entity_spawned
 
-	_grid.spawn(_grid.player, Vector2i(-4, 0))
+	_grid.spawn(_grid.player, Vector2i(-5, 0))
 	await _grid.entity_spawned
 
 	_enemy_manager.spawn_enemies()
